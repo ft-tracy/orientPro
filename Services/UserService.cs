@@ -20,12 +20,12 @@ namespace OnboardPro.Services
         }
 
         //Calls functions that do all three things
-        public async Task AddUserAsync(User user)
+        public async Task AddUserAsync(User user, bool isCreatedByUser = false, bool isWebApp = true)
         {
             user.OTP = GenerateOtp();
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
-            SendOtpEmail(user);
+            SendOtpEmail(user, isCreatedByUser, isWebApp);
         }
 
         //Generates OTP
@@ -37,7 +37,7 @@ namespace OnboardPro.Services
         }
 
         //Drafts and send email with first time login details
-        private void SendOtpEmail(User user)
+        private void SendOtpEmail(User user, bool isCretedByUser, bool isWebApp)
         {
             var fromAddress = new MailAddress("onboardproinfo@gmail.com", "OnboardPro");
             var toAddress = new MailAddress(user.Email, user.Username);
@@ -47,11 +47,23 @@ namespace OnboardPro.Services
             string resetLink;
             if (user.Role == "Admin" || user.Role == "Supervisor")
             {
-                resetLink = $"https://yourdomain.com/admin/reset-password?otp={user.OTP}";
+                resetLink = $"https://yourdomain.com/admin/reset-password?otp=" + user.OTP;
             }
             else if (user.Role == "Trainee" || user.Role == "Guest")
             {
-                resetLink = $"https://yourdomain.com/trainee/reset-password?otp={user.OTP}";
+                if (isCreatedByAdmin)
+                {
+                    resetLink = $"https://yourdomain.com/trainee/reset-password?otp=" + user.OTP;
+                }
+                else {
+                    if (isWebApp) 
+                    {
+                        resetLink = $"https://yourdomain.com/trainee/reset-password?otp=" + user.OTP;
+                    }
+                    else 
+                    {
+                        resetLink = $"mobileapp://reset-password?otp=" + user.OTP;
+                    }
             }
             else
             {
