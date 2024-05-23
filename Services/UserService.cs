@@ -20,12 +20,12 @@ namespace OnboardPro.Services
         }
 
         //Calls functions that do all three things
-        public async Task AddUserAsync(User user, bool isCreatedByUser = false, bool isWebApp = true)
+        public async Task AddUserAsync(User user, bool isCreatedByAdmin = false, bool isWebApp = true)
         {
             user.OTP = GenerateOtp();
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
-            SendOtpEmail(user, isCreatedByUser, isWebApp);
+            SendOtpEmail(user, isCreatedByAdmin, isWebApp);
         }
 
         //Generates OTP
@@ -37,7 +37,7 @@ namespace OnboardPro.Services
         }
 
         //Drafts and send email with first time login details
-        private void SendOtpEmail(User user, bool isCretedByUser, bool isWebApp)
+        private void SendOtpEmail(User user, bool isCretedByAdmin, bool isWebApp)
         {
             var fromAddress = new MailAddress("onboardproinfo@gmail.com", "OnboardPro");
             var toAddress = new MailAddress(user.Email, user.Username);
