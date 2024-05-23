@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using LoginApp.Data;
@@ -54,10 +54,12 @@ namespace LoginApp.Controllers
                 return NotFound(new { message = "User not found." });
             }
 
+            if (request.NewPassword != request.ConfirmPassword)
+            {
+                return BadRequest(new { message = "Passwords do not match." });
+            }
+
             user.Pwd = _passwordHasher.HashPassword(user, request.NewPassword);
-            user.Name = request.Name;
-            user.Email = request.Email;
-            user.Role = request.Role;
             user.IsFirstLogin = false;
 
             _context.Users.Update(user);
@@ -77,9 +79,9 @@ namespace LoginApp.Controllers
 
             var user = new User
             {
-                Email = request.Email,
                 FirstName = request.FirstName,
                 LastName = request.LastName,
+                Email = request.Email,
                 Role = "Guest",
                 IsFirstLogin = true,
                 HasAccess = true
@@ -102,9 +104,9 @@ namespace LoginApp.Controllers
     {
         public string Username { get; set; }
         public string NewPassword { get; set; }
-        public string Name { get; set; }
-        public string Email { get; set; }
-        public string Role { get; set; }
+        public string ConfirmPassword { get; set; }
+       
+        
     }
 
     public class SignUpRequest
@@ -115,5 +117,3 @@ namespace LoginApp.Controllers
     }
 
 }
-
- 
