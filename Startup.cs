@@ -1,5 +1,6 @@
-﻿using LoginApp.Data;
+using LoginApp.Data;
 using LoginApp.Models;
+using LoginApp.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -20,14 +21,23 @@ public class Startup
 
     public void ConfigureServices(IServiceCollection services)
     {
+        var connectionString = Configuration.GetConnectionString("DefaultConnection");
         services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
         services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+        services.AddScoped<UserService>();
 
         services.AddControllers();
 
-        // Register the Swagger generator, defining one or more Swagger documents
+        services.AddCors(options =>
+        {
+            options.AddPolicy("AllowAllOrigins",
+                builder => builder.AllowAnyOrigin()
+                                  .AllowAnyMethod()
+                                  .AllowAnyHeader());
+        });
+
         services.AddSwaggerGen(c =>
         {
             c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
@@ -42,7 +52,7 @@ public class Startup
         }
         else
         {
-            app.UseExceptionHandler("/Error");
+            app.UseExceptionHandler("/Home/Error");
             app.UseHsts();
         }
 
@@ -51,22 +61,21 @@ public class Startup
 
         app.UseRouting();
 
+        app.UseCors("AllowAllOrigins");
+
         app.UseAuthorization();
 
         app.UseEndpoints(endpoints =>
         {
-            endpoints.MapControllers();
+            endpoints.MapControllerRoute(
+                name: "default",
+                pattern: "{controller=Home}/{action=Index}/{id?}");
         });
 
-        // Enable middleware to serve generated Swagger as a JSON endpoint.
         app.UseSwagger();
-
-        // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
-        // specifying the Swagger JSON endpoint.
         app.UseSwaggerUI(c =>
         {
             c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
-            c.RoutePrefix = string.Empty; // This makes the Swagger UI available at the root URL
         });
     }
 }
