@@ -22,33 +22,92 @@ namespace LoginApp.Controllers
             _passwordHasher = passwordHasher;
             _userService = userService;
         }
-
         [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
-            var user = await _context.Users.SingleOrDefaultAsync(u => u.Username == request.Username);
-            if (user == null || (user.IsFirstLogin && user.Pwd != request.Password))
+            var user = await _context.Users.SingleOrDefaultAsync(u => u.Email == request.Email);
+
+            if (user == null)
             {
                 return Unauthorized(new { message = "Invalid credentials." });
             }
 
-            if (!user.IsFirstLogin && _passwordHasher.VerifyHashedPassword(user, user.Pwd, request.Password) == PasswordVerificationResult.Failed)
+            // Check if it's the user's first login
+            if (user.IsFirstLogin)
             {
-                return Unauthorized(new { message = "Invalid credentials." });
-            }
+                // For admin login
+                if (user.Role == "Admin")
+                {
+                    // Verify that the provided email matches the email in the database
+                    if (request.Email != user.Email)
+                    {
+                        return Unauthorized(new { message = "Invalid credentials." });
+                    }
 
-            if (user.Role == "Admin" && user.IsFirstLogin)
+                    // Check if the provided password matches the password in the database (initially set for the admin)
+                    if (request.Password != user.Pwd)
+                    {
+                        return Unauthorized(new { message = "Invalid credentials." });
+                    }
+
+                    // If credentials are correct, redirect to reset password page
+                    return Ok(new { message = "First login. Redirect to reset credentials.", redirectUrl = "/reset-password" });
+                }
+                else // For guest login
+                {
+                    // Verify the OTP entered by the user
+                    if (request.Password != user.OTP)
+                    {
+                        return Unauthorized(new { message = "Invalid OTP." });
+                    }
+
+                    // Verify that the email provided during login matches the email to which the OTP was sent
+                    if (request.Email != user.Email)
+                    {
+                        return Unauthorized(new { message = "Invalid email." });
+                    }
+
+                    // If OTP is correct and email matches, redirect to reset password page
+                    return Ok(new { message = "First login. Redirect to reset credentials.", redirectUrl = "/reset-password" });
+                }
+            }
+            else // For subsequent logins
             {
-                return Ok(new { message = "First login. Redirect to reset credentials.", redirectUrl = "/reset-password" });
+                // For admin login, after resetting password
+                if (user.Role == "Admin")
+                {
+                    // Verify that the provided email matches the email in the database
+                    if (request.Email != user.Email)
+                    {
+                        return Unauthorized(new { message = "Invalid credentials." });
+                    }
+
+                    // Check if the provided password matches the password in the database (initially set for the admin)
+                    if (_passwordHasher.VerifyHashedPassword(user, user.Pwd, request.Password) == PasswordVerificationResult.Failed)
+                    {
+                        return Unauthorized(new { message = "Invalid credentials." });
+                    }
+                }
+                else // For guest login
+                {
+                    // Verify hashed password
+                    if (_passwordHasher.VerifyHashedPassword(user, user.Pwd, request.Password) == PasswordVerificationResult.Failed)
+                    {
+                        return Unauthorized(new { message = "Invalid credentials." });
+                    }
+                }
             }
 
             return Ok(new { message = "Login successful." });
         }
 
+
+
+
         [HttpPost("ResetPassword")]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
         {
-            var user = await _context.Users.SingleOrDefaultAsync(u => u.Username == request.Username);
+            var user = await _context.Users.SingleOrDefaultAsync(u => u.Email == request.Email);
             if (user == null)
             {
                 return NotFound(new { message = "User not found." });
@@ -92,28 +151,25 @@ namespace LoginApp.Controllers
             return Ok(new { message = "Sign-up successful. OTP has been sent to your email." });
         }
 
-    }
+        public class LoginRequest
+        {
+            public string Email { get; set; }
+            public string Password { get; set; }
+        }
 
-    public class LoginRequest
-    {
-        public string Username { get; set; }
-        public string Password { get; set; }
-    }
+        public class ResetPasswordRequest
+        {
+            public string Email { get; set; }  // For verifying the user
+            public string NewPassword { get; set; }
+            public string ConfirmPassword { get; set; }
+        }
 
-    public class ResetPasswordRequest
-    {
-        public string Username { get; set; }
-        public string NewPassword { get; set; }
-        public string ConfirmPassword { get; set; }
-       
-        
+        public class SignUpRequest
+        {
+            public string FirstName { get; set; }
+            public string LastName { get; set; }
+            public string Email { get; set; }
+        }
     }
-
-    public class SignUpRequest
-    {
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string Email { get; set; }
-    }
-
 }
+
