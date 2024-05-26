@@ -12,17 +12,16 @@ using Microsoft.OpenApi.Models;
 
 public class Startup
 {
-    public IConfiguration Configuration { get; }
     public Startup(IConfiguration configuration)
     {
         Configuration = configuration;
     }
 
+    public IConfiguration Configuration { get; }
+
     public void ConfigureServices(IServiceCollection services)
     {
-        // Retrieve connection string from environment variables or fallback to appsettings.json
-        var connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection") ?? Configuration.GetConnectionString("DefaultConnection");
-
+        var connectionString = Configuration.GetConnectionString("DefaultConnection");
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
@@ -50,13 +49,11 @@ public class Startup
         if (env.IsDevelopment())
         {
             app.UseDeveloperExceptionPage();
-            // Add any other development-specific middleware/configuration here
         }
-        else if (env.IsProduction())
+        else
         {
             app.UseExceptionHandler("/Home/Error");
             app.UseHsts();
-            // Add any other production-specific middleware/configuration here
         }
 
         app.UseHttpsRedirection();
