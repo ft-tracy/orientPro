@@ -3,8 +3,8 @@
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 USER app
 WORKDIR /app
-EXPOSE 8080
-EXPOSE 8081
+EXPOSE 80
+
 
 ENV ASPNETCORE_ENVIRONMENT=Production
 ENV ConnectionStrings__DefaultConnection="Server=mysql-container;Port=3306;Database=orientpro;User=root;Password=agina1906;"
@@ -12,11 +12,11 @@ ENV ConnectionStrings__DefaultConnection="Server=mysql-container;Port=3306;Datab
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["Login/LoginApp.csproj", "Login/"]
+COPY ["LoginApp.csproj", "./Login/"]
 RUN dotnet restore "./Login/LoginApp.csproj"
 COPY . .
 WORKDIR "/src/Login"
-RUN dotnet build "./LoginApp.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet build "LoginApp.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
