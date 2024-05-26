@@ -13,10 +13,13 @@ ENV ConnectionStrings__DefaultConnection="Server=mysql-container;Port=3306;Datab
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
+
 COPY ["LoginApp.csproj", "./"]
-RUN dotnet restore "./Login/LoginApp.csproj"
+RUN dotnet restore "./LoginApp.csproj"
+
 COPY . .
-WORKDIR "/src/Login"
+
+WORKDIR "/src"
 RUN dotnet build "LoginApp.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
