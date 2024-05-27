@@ -1,10 +1,73 @@
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".DummyHomePageActivity">
+        android:orientation="vertical"
+        android:background="@color/dark_background"
+        android:padding="16dp">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:background="@null"
+            android:src="@drawable/ic_arrow_back"
+            android:contentDescription="Back"
+            android:layout_constraintTop_toTopOf="parent"
+            android:layout_constraintLeft_toLeftOf="parent"/>
+
+         <!-- Congratulations Text -->
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Congratulations!"
+            android:textColor="@color/dark_text_primary"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:gravity="center"/>
+
+    <!-- You've completed the course Text -->
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="You've completed the course!"
+            android:textColor="@color/dark_text_primary"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_marginTop="8dp"/>
+
+    <!-- Download your certificate Text -->
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Download your certificate to share with friends and colleagues."
+            android:textColor="@color/dark_text_secondary"
+            android:textSize="16sp"
+            android:gravity="center"
+            android:layout_marginTop="8dp"/>
+
+    <!-- Image -->
+    <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:src="@drawable/gainaccess_image"
+            android:scaleType="centerCrop"
+            android:layout_marginTop="16dp"/>
+
+    <!-- Download Certificate Button -->
+    <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/dark_button_background"
+            android:text="Download Certificate"
+            android:textColor="@color/dark_button_text"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp"
+            android:padding="16dp"
+            android:layout_gravity="center"
+            android:background="@drawable/rounded_button"/>
+
+</LinearLayout>
