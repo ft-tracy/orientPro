@@ -5,6 +5,7 @@ using LoginApp.Data;
 using LoginApp.Models;
 using LoginApp.Services;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LoginApp.Controllers
 {
@@ -22,6 +23,8 @@ namespace LoginApp.Controllers
             _passwordHasher = passwordHasher;
             _userService = userService;
         }
+
+        [AllowAnonymous]
         [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
@@ -101,9 +104,7 @@ namespace LoginApp.Controllers
             return Ok(new { message = "Login successful." });
         }
 
-
-
-
+        [AllowAnonymous]
         [HttpPost("ResetPassword")]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
         {
@@ -127,6 +128,7 @@ namespace LoginApp.Controllers
             return Ok(new { message = "Password reset successful." });
         }
 
+        [AllowAnonymous]
         [HttpPost("SignUp")]
         public async Task<IActionResult> SignUp([FromBody] SignUpRequest request)
         {
@@ -151,6 +153,13 @@ namespace LoginApp.Controllers
             return Ok(new { message = "Sign-up successful. OTP has been sent to your email." });
         }
 
+        [Authorize]
+        [HttpGet("ProtectedEndpoint")]
+        public IActionResult ProtectedEndpoint()
+        {
+            return Ok(new { message = "You have access to this protected endpoint." });
+        }
+
         public class LoginRequest
         {
             public string Email { get; set; }
@@ -173,3 +182,11 @@ namespace LoginApp.Controllers
     }
 }
 
+//login -- https://10.20.33.102:44308/api/account/login
+//reset password -- https://10.20.33.102:44308/api/account/resetpassword
+// sign up --- https://10.20.33.102:44308/api/account/signup
+
+//and these are for the http
+//http://10.20.33.102:5193/api/account/login
+//http://10.20.33.102:5193/api/account/resetpassword
+//http://10.20.33.102:5193/api/account/signup
