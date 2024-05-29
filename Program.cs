@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+using System;
 
 namespace LoginApp
 {
@@ -29,6 +30,20 @@ namespace LoginApp
                             });
                         }
                     });
+
+                    // Check if Render environment variable exists
+                    var renderPort = Environment.GetEnvironmentVariable("PORT");
+                    if (!string.IsNullOrEmpty(renderPort))
+                    {
+                        // Use the port specified by Render
+                        webBuilder.UseUrls($"https://0.0.0.0:{renderPort}");
+                    }
+                    else
+                    {
+                        // Use a default port if not running in Render
+                        webBuilder.UseUrls("https://0.0.0.0:5000");
+                    }
+
                     webBuilder.UseStartup<Startup>();
                 });
     }
