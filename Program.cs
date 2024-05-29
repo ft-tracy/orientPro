@@ -2,8 +2,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using System;
-using System.Linq;
-using System.Net.NetworkInformation;
 
 namespace LoginApp
 {
@@ -24,35 +22,19 @@ namespace LoginApp
                         var certPath = certConfig.GetValue<string>("Path");
                         var certPassword = certConfig.GetValue<string>("Password");
 
-                        int port = GetAvailablePort(5000, 5100); // Check ports between 5000 and 5100
-
                         if (!string.IsNullOrEmpty(certPath) && !string.IsNullOrEmpty(certPassword))
                         {
-                            serverOptions.ListenAnyIP(port, listenOptions =>
+                            serverOptions.ListenAnyIP(int.Parse(Environment.GetEnvironmentVariable("PORT") ?? "80"), listenOptions =>
                             {
                                 listenOptions.UseHttps(certPath, certPassword);
                             });
                         }
+                        else
+                        {
+                            serverOptions.ListenAnyIP(int.Parse(Environment.GetEnvironmentVariable("PORT") ?? "80"));
+                        }
                     });
-                    webBuilder.UseStartup<Startup>()
-                              .UseUrls("https://0.0.0.0:" + (Environment.GetEnvironmentVariable("PORT") ?? "5000"));
+                    webBuilder.UseStartup<Startup>();
                 });
-
-        private static int GetAvailablePort(int minPort, int maxPort)
-        {
-            var usedPorts = IPGlobalProperties.GetIPGlobalProperties()
-                .GetActiveTcpListeners()
-                .Select(p => p.Port)
-                .ToArray();
-
-            for (int port = minPort; port <= maxPort; port++)
-            {
-                if (!usedPorts.Contains(port))
-                {
-                    return port;
-                }
-            }
-            throw new Exception("No available ports in the specified range.");
-        }
     }
 }
