@@ -3,8 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Linq;
-using System.Net;
-using System.Net.Sockets;
+using System.Net.NetworkInformation;
 
 namespace LoginApp
 {
@@ -25,7 +24,7 @@ namespace LoginApp
                         var certPath = certConfig.GetValue<string>("Path");
                         var certPassword = certConfig.GetValue<string>("Password");
 
-                        var port = GetAvailablePort(5000, 5100); // Check ports between 5000 and 5100
+                        int port = GetAvailablePort(5000, 5100); // Check ports between 5000 and 5100
 
                         if (!string.IsNullOrEmpty(certPath) && !string.IsNullOrEmpty(certPassword))
                         {
@@ -36,7 +35,7 @@ namespace LoginApp
                         }
                     });
                     webBuilder.UseStartup<Startup>()
-                              .UseUrls("https://0.0.0.0:" + Environment.GetEnvironmentVariable("PORT") ?? "5000");
+                              .UseUrls("https://0.0.0.0:" + (Environment.GetEnvironmentVariable("PORT") ?? "5000"));
                 });
 
         private static int GetAvailablePort(int minPort, int maxPort)
