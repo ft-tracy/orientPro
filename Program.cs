@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
-using System;
 
 namespace LoginApp
 {
@@ -24,14 +23,10 @@ namespace LoginApp
 
                         if (!string.IsNullOrEmpty(certPath) && !string.IsNullOrEmpty(certPassword))
                         {
-                            serverOptions.ListenAnyIP(int.Parse(Environment.GetEnvironmentVariable("PORT") ?? "80"), listenOptions =>
+                            serverOptions.ListenAnyIP(0, listenOptions =>
                             {
                                 listenOptions.UseHttps(certPath, certPassword);
                             });
-                        }
-                        else
-                        {
-                            serverOptions.ListenAnyIP(int.Parse(Environment.GetEnvironmentVariable("PORT") ?? "80"));
                         }
                     });
                     webBuilder.UseStartup<Startup>();
