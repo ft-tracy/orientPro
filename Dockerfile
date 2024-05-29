@@ -1,7 +1,9 @@
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 USER app
 WORKDIR /app
-ENV PORT=5000
+EXPOSE 80
+EXPOSE 443
+
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
@@ -21,5 +23,4 @@ WORKDIR /app
 COPY --from=publish /app/publish .
 # Copy the certificate file into the image
 COPY certs/orientcert.pfx /app/certs/orientcert.pfx
-EXPOSE $PORT
 ENTRYPOINT ["dotnet", "LoginApp.dll"]
