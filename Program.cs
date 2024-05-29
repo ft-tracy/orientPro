@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
-using System;
 
 namespace LoginApp
 {
@@ -18,32 +17,31 @@ namespace LoginApp
                 {
                     webBuilder.ConfigureKestrel((context, serverOptions) =>
                     {
-                        var certConfig = context.Configuration.GetSection("Kestrel:Endpoints:Https:Certificate");
+                        var kestrelConfig = context.Configuration.GetSection("Kestrel:Endpoints");
+
+                        // Read HTTP endpoint configuration
+                        var httpEndpoint = kestrelConfig.GetSection("Http:Url").Value;
+                        if (!string.IsNullOrEmpty(httpEndpoint))
+                        {
+                            serverOptions.ListenAnyIP(new Uri(httpEndpoint).Port);
+                        }
+
+                        // Read HTTPS endpoint configuration
+                        var httpsEndpoint = kestrelConfig.GetSection("Https:Url").Value;
+                        var certConfig = kestrelConfig.GetSection("Https:Certificate");
                         var certPath = certConfig.GetValue<string>("Path");
                         var certPassword = certConfig.GetValue<string>("Password");
 
-                        if (!string.IsNullOrEmpty(certPath) && !string.IsNullOrEmpty(certPassword))
+                        if (!string.IsNullOrEmpty(httpsEndpoint) && !string.IsNullOrEmpty(certPath) && !string.IsNullOrEmpty(certPassword))
                         {
-                            serverOptions.ListenAnyIP(0, listenOptions =>
+                            serverOptions.ListenAnyIP(new Uri(httpsEndpoint).Port, listenOptions =>
                             {
                                 listenOptions.UseHttps(certPath, certPassword);
                             });
                         }
                     });
 
-                   // Check if Render environment variable exists
-var renderPort = Environment.GetEnvironmentVariable("PORT");
-if (!string.IsNullOrEmpty(renderPort))
-{
-    // Use the port specified by Render
-    webBuilder.UseUrls($"https://0.0.0.0:{renderPort}");
-}
-else
-{
-    // Use a default port if not running in Render
-    webBuilder.UseUrls("https://0.0.0.0:8080"); // Updated to use port 8080
-}
-
+                    // Set default URLs to use the specified ports from the configuration
                     webBuilder.UseStartup<Startup>();
                 });
     }
