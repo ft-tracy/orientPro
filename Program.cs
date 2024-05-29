@@ -23,14 +23,13 @@ namespace LoginApp
 
                         if (!string.IsNullOrEmpty(certPath) && !string.IsNullOrEmpty(certPassword))
                         {
-                            serverOptions.ListenAnyIP(44308, listenOptions =>
+                            serverOptions.ListenAnyIP(0, listenOptions =>
                             {
                                 listenOptions.UseHttps(certPath, certPassword);
                             });
                         }
                     });
-                    webBuilder.UseStartup<Startup>()
-                              .UseUrls("https://0.0.0.0:44308");
+                    webBuilder.UseStartup<Startup>();
                 });
     }
 }
