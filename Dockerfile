@@ -22,5 +22,4 @@ WORKDIR /app
 COPY --from=publish /app/publish .
 # Copy the certificate file into the image
 COPY certs/orientcert.pfx /app/certs/orientcert.pfx
-ENV ASPNETCORE_URLS=https://0.0.0.0:${PORT}
 ENTRYPOINT ["dotnet", "LoginApp.dll"]
