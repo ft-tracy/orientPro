@@ -1,8 +1,8 @@
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 USER app
 WORKDIR /app
-EXPOSE 8080
-EXPOSE 44308
+EXPOSE 80
+EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
@@ -22,4 +22,5 @@ WORKDIR /app
 COPY --from=publish /app/publish .
 # Copy the certificate file into the image
 COPY certs/orientcert.pfx /app/certs/orientcert.pfx
+ENV ASPNETCORE_URLS=https://0.0.0.0:${PORT}
 ENTRYPOINT ["dotnet", "LoginApp.dll"]
