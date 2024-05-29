@@ -22,4 +22,7 @@ RUN dotnet publish "./LoginApp.csproj" -c $BUILD_CONFIGURATION -o /app/publish /
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+
+# Copy the certificate file into the image
+COPY certs/orientcert.pfx /app/certs/orientcert.pfx
 ENTRYPOINT ["dotnet", "LoginApp.dll"]
