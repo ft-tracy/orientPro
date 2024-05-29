@@ -31,18 +31,18 @@ namespace LoginApp
                         }
                     });
 
-                    // Check if Render environment variable exists
-                    var renderPort = Environment.GetEnvironmentVariable("PORT");
-                    if (!string.IsNullOrEmpty(renderPort))
-                    {
-                        // Use the port specified by Render
-                        webBuilder.UseUrls($"https://0.0.0.0:{renderPort}");
-                    }
-                    else
-                    {
-                        // Use a default port if not running in Render
-                        webBuilder.UseUrls("https://0.0.0.0:5000");
-                    }
+                   // Check if Render environment variable exists
+var renderPort = Environment.GetEnvironmentVariable("PORT");
+if (!string.IsNullOrEmpty(renderPort))
+{
+    // Use the port specified by Render
+    webBuilder.UseUrls($"https://0.0.0.0:{renderPort}");
+}
+else
+{
+    // Use a default port if not running in Render
+    webBuilder.UseUrls("https://0.0.0.0:8080"); // Updated to use port 8080
+}
 
                     webBuilder.UseStartup<Startup>();
                 });
