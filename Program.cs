@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+using System;
 
 namespace LoginApp
 {
@@ -23,14 +24,20 @@ namespace LoginApp
 
                         if (!string.IsNullOrEmpty(certPath) && !string.IsNullOrEmpty(certPassword))
                         {
-                            serverOptions.ListenAnyIP(44309, listenOptions =>
+                            serverOptions.ListenAnyIP(int.Parse(GetPort()), listenOptions =>
                             {
                                 listenOptions.UseHttps(certPath, certPassword);
                             });
                         }
                     });
                     webBuilder.UseStartup<Startup>()
-                              .UseUrls("https://0.0.0.0:44309");
+                              .UseUrls("https://0.0.0.0:" + GetPort());
                 });
+
+        private static string GetPort()
+        {
+            var port = Environment.GetEnvironmentVariable("PORT");
+            return string.IsNullOrEmpty(port) ? "5000" : port;
+        }
     }
 }
