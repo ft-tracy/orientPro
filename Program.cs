@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using System;
-using System.Security.Cryptography.X509Certificates;
 
 namespace LoginApp
 {
@@ -25,19 +24,25 @@ namespace LoginApp
 
                         if (!string.IsNullOrEmpty(certPath) && !string.IsNullOrEmpty(certPassword))
                         {
-                            serverOptions.ConfigureHttpsDefaults(listenOptions =>
+                            serverOptions.ListenAnyIP(0, listenOptions =>
                             {
-                                listenOptions.ServerCertificate = new X509Certificate2(certPath, certPassword);
+                                listenOptions.UseHttps(certPath, certPassword);
                             });
                         }
                     });
 
-                    // Use the port specified by Render, otherwise default ports will be used
-                    var renderPort = Environment.GetEnvironmentVariable("PORT");
-                    if (!string.IsNullOrEmpty(renderPort))
-                    {
-                        webBuilder.UseUrls($"http://0.0.0.0:{renderPort}");
-                    }
+                   // Check if Render environment variable exists
+var renderPort = Environment.GetEnvironmentVariable("PORT");
+if (!string.IsNullOrEmpty(renderPort))
+{
+    // Use the port specified by Render
+    webBuilder.UseUrls($"https://0.0.0.0:{renderPort}");
+}
+else
+{
+    // Use a default port if not running in Render
+    webBuilder.UseUrls("https://0.0.0.0:8080"); // Updated to use port 8080
+}
 
                     webBuilder.UseStartup<Startup>();
                 });
