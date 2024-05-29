@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 
 namespace LoginApp
 {
@@ -17,7 +17,17 @@ namespace LoginApp
                 {
                     webBuilder.ConfigureKestrel((context, serverOptions) =>
                     {
-                        serverOptions.Configure(context.Configuration.GetSection("Kestrel"));
+                        var certConfig = context.Configuration.GetSection("Kestrel:Endpoints:Https:Certificate");
+                        var certPath = certConfig.GetValue<string>("Path");
+                        var certPassword = certConfig.GetValue<string>("Password");
+
+                        if (!string.IsNullOrEmpty(certPath) && !string.IsNullOrEmpty(certPassword))
+                        {
+                            serverOptions.ListenAnyIP(44308, listenOptions =>
+                            {
+                                listenOptions.UseHttps(certPath, certPassword);
+                            });
+                        }
                     });
                     webBuilder.UseStartup<Startup>()
                               .UseUrls("https://0.0.0.0:44308");
