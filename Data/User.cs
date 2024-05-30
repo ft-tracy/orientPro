@@ -1,3 +1,5 @@
+#nullable enable
+
 using System;
 using System.ComponentModel.DataAnnotations;
 
@@ -22,9 +24,10 @@ namespace LoginApp.Models
 
         public bool IsFirstLogin { get; set; }
 
-        public string OTP { get; set; }  // Add this line
+        public string? OTP { get; set; }  // Nullable type since it might not always be set
 
-        public DateTime OTPExpiration { get; set; }  // Add this line
+        public DateTime? OTPExpiration { get; set; }  // Nullable type since it might not always be set
+
         public string LastName { get; set; } = string.Empty;
     }
 }
