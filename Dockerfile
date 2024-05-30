@@ -3,16 +3,17 @@ FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
 WORKDIR /app
 EXPOSE 80
 
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
-COPY ["LoginApp/LoginApp.csproj", "LoginApp/"]
-RUN dotnet restore "LoginApp/LoginApp.csproj"
+COPY ["LoginApp.csproj", "."]
+RUN dotnet restore "./LoginApp.csproj"
 COPY . .
-WORKDIR "/src/LoginApp"
-RUN dotnet build "LoginApp.csproj" -c Release -o /app/build
+WORKDIR "/src/."
+RUN dotnet build "./LoginApp.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "LoginApp.csproj" -c Release -o /app/publish
+ARG BUILD_CONFIGURATION=Release
+RUN dotnet publish "./LoginApp.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
