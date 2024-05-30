@@ -1,9 +1,11 @@
-# Use the official .NET image
-FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+USER app
 WORKDIR /app
 EXPOSE 80
+EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["LoginApp.csproj", "."]
 RUN dotnet restore "./LoginApp.csproj"
@@ -18,5 +20,8 @@ RUN dotnet publish "./LoginApp.csproj" -c $BUILD_CONFIGURATION -o /app/publish /
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+
+# Set the ASPNETCORE_URLS environment variable to use the PORT environment variable
 ENV ASPNETCORE_URLS=http://+:${PORT}
+
 ENTRYPOINT ["dotnet", "LoginApp.dll"]
