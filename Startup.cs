@@ -23,15 +23,15 @@ public class Startup
     public IConfiguration Configuration { get; }
 
     public void ConfigureServices(IServiceCollection services)
-    {
-        var connectionString = Configuration.GetConnectionString("DefaultConnection");
-        services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+ {
+     var connectionString = Configuration.GetConnectionString("DefaultConnection");
+     services.AddDbContext<ApplicationDbContext>(options =>
+         options.UseSqlServer(connectionString)); // Use SqlServer instead of UseMySql
 
-        services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
-        services.AddScoped<UserService>();
+     services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+     services.AddScoped<UserService>();
 
-        services.AddCors(options =>
+     services.AddCors(options =>
         {
             options.AddPolicy("AllowAllOrigins",
                 builder => builder.AllowAnyOrigin()
