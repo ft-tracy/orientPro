@@ -8,18 +8,14 @@ namespace LoginApp
     {
         public static void Main(string[] args)
         {
-            // Read the port number from the PORT environment variable
-            string port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
-
-            CreateHostBuilder(args, port).Build().Run();
+            CreateHostBuilder(args).Build().Run();
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args, string port) =>
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseStartup<Startup>()
-                              .UseUrls($"http://0.0.0.0:{port}");
+                    webBuilder.UseStartup<Startup>();
                 });
     }
 }
