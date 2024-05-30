@@ -23,15 +23,15 @@ public class Startup
     public IConfiguration Configuration { get; }
 
     public void ConfigureServices(IServiceCollection services)
- {
-     var connectionString = Configuration.GetConnectionString("DefaultConnection");
-     services.AddDbContext<ApplicationDbContext>(options =>
-         options.UseSqlServer(connectionString)); // Use SqlServer instead of UseMySql
+    {
+        var connectionString = Configuration.GetConnectionString("DefaultConnection");
+        services.AddDbContext<ApplicationDbContext>(options =>
+            options.UseSqlServer(connectionString));
 
-     services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
-     services.AddScoped<UserService>();
+        services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+        services.AddScoped<UserService>();
 
-     services.AddCors(options =>
+        services.AddCors(options =>
         {
             options.AddPolicy("AllowAllOrigins",
                 builder => builder.AllowAnyOrigin()
@@ -49,7 +49,7 @@ public class Startup
         })
         .AddJwtBearer(x =>
         {
-            x.RequireHttpsMetadata = false;
+            x.RequireHttpsMetadata = true;
             x.SaveToken = true;
             x.TokenValidationParameters = new TokenValidationParameters
             {
@@ -106,8 +106,6 @@ public class Startup
         app.UseAuthentication();
         app.UseAuthorization();
 
-        
-
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllerRoute(
@@ -123,4 +121,3 @@ public class Startup
         });
     }
 }
-
