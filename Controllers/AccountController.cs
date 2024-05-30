@@ -162,31 +162,22 @@ namespace LoginApp.Controllers
 
         public class LoginRequest
         {
-            public string Email { get; set; }
-            public string Password { get; set; }
+            public string Email { get; set; } = string.Empty;
+            public string Password { get; set; } = string.Empty;
         }
 
         public class ResetPasswordRequest
         {
-            public string Email { get; set; }  // For verifying the user
-            public string NewPassword { get; set; }
-            public string ConfirmPassword { get; set; }
+            public string Email { get; set; } = string.Empty;
+            public string NewPassword { get; set; } = string.Empty;
+            public string ConfirmPassword { get; set; } = string.Empty;
         }
 
         public class SignUpRequest
         {
-            public string FirstName { get; set; }
-            public string LastName { get; set; }
-            public string Email { get; set; }
+            public string FirstName { get; set; } = string.Empty;
+            public string LastName { get; set; } = string.Empty;
+            public string Email { get; set; } = string.Empty;
         }
     }
 }
-
-//login -- https://10.20.33.102:44308/api/account/login
-//reset password -- https://10.20.33.102:44308/api/account/resetpassword
-// sign up --- https://10.20.33.102:44308/api/account/signup
-
-//and these are for the http
-//http://10.20.33.102:5193/api/account/login
-//http://10.20.33.102:5193/api/account/resetpassword
-//http://10.20.33.102:5193/api/account/signup
