@@ -7,6 +7,7 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.myapplication.HomepageActivity
 import com.example.orientpro.utils.APIClient
 import com.example.orientpro.utils.SignUpRequest
 import com.example.orientpro.utils.SignUpResponse
@@ -19,7 +20,7 @@ class SignUpActivity : AppCompatActivity() {
     private lateinit var etFirstName: EditText
     private lateinit var etLastName: EditText
     private lateinit var etEmail: EditText
-    private lateinit var btnProceed: Button
+    private lateinit var btnSignupHome: Button
     private lateinit var btnBack: ImageButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,10 +30,10 @@ class SignUpActivity : AppCompatActivity() {
         etFirstName = findViewById(R.id.etFirstName)
         etLastName = findViewById(R.id.etLastName)
         etEmail = findViewById(R.id.etEmail)
-        btnProceed = findViewById(R.id.btnProceed)
+        btnSignupHome = findViewById(R.id.btnSignupHome)
         btnBack = findViewById(R.id.btnBack)
 
-        btnProceed.setOnClickListener {
+        btnSignupHome.setOnClickListener {
             signUpUser()
         }
 
@@ -56,7 +57,7 @@ class SignUpActivity : AppCompatActivity() {
             override fun onResponse(call: Call<SignUpResponse>, response: Response<SignUpResponse>) {
                 if (response.isSuccessful && response.body()?.success == true) {
                     Toast.makeText(this@SignUpActivity, "Sign up successful", Toast.LENGTH_SHORT).show()
-                    val intent = Intent(this@SignUpActivity, LoginActivity::class.java)
+                    val intent = Intent(this@SignUpActivity, HomepageActivity::class.java)
                     startActivity(intent)
                     finish()
                 } else {

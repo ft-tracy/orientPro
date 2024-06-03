@@ -70,14 +70,14 @@
         android:layout_marginTop="16dp"
         android:hint="E-mail"
         app:layout_constraintTop_toBottomOf="@id/etLastName"
-        app:layout_constraintBottom_toTopOf="@id/btnProceed"
+        app:layout_constraintBottom_toTopOf="@id/btnSignupHome"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintWidth_percent="0.9" android:minHeight="48dp"/>
 
 
     <Button
-        android:id="@+id/btnProceed"
+        android:id="@+id/btnSignupHome"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"

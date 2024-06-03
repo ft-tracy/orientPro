@@ -1,28 +1,40 @@
-package com.example.orientpro
+package com.example.myapplication
 
 import android.os.Bundle
-import com.google.android.material.appbar.CollapsingToolbarLayout
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.snackbar.Snackbar
+import android.widget.ImageButton
+import android.widget.ImageView
+import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import com.example.orientpro.databinding.ActivityHomepageBinding
+import com.example.orientpro.R
 
 class HomepageActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityHomepageBinding
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_homepage)
 
-        binding = ActivityHomepageBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        // Initialize UI elements
+        val btnSettings: ImageButton = findViewById(R.id.btn_settings)
+        val btnAddCourse: ImageButton = findViewById(R.id.btn_add_course)
+        val tvEnrolledCourses: TextView = findViewById(R.id.tv_enrolled_courses)
+        val imgEnrolledCourse1: ImageView = findViewById(R.id.img_enrolled_course_1)
+        val imgEnrolledCourse2: ImageView = findViewById(R.id.img_enrolled_course_2)
+        val progressBar1: ProgressBar = findViewById(R.id.progressBar1)
+        val progressBar2: ProgressBar = findViewById(R.id.progressBar2)
+        val tvAvailableCourses: TextView = findViewById(R.id.tv_available_courses)
+        val tvHelpfulTips: TextView = findViewById(R.id.tv_helpful_tips)
 
-        setSupportActionBar(findViewById(R.id.toolbar))
-        binding.toolbarLayout.title = title
-        binding.fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null)
-                .setAnchorView(R.id.fab).show()
+
+        // Add click listeners
+        btnSettings.setOnClickListener {
+            // Code to handle settings button click
         }
+
+        btnAddCourse.setOnClickListener {
+            // Code to handle add course button click
+        }
+
+        // Additional initialization or testing code can be added here
     }
 }
