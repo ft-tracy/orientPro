@@ -6,6 +6,8 @@ using LoginApp.Models;
 using LoginApp.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Logging;
+using System;
 
 namespace LoginApp.Controllers
 {
@@ -16,91 +18,65 @@ namespace LoginApp.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IPasswordHasher<User> _passwordHasher;
         private readonly UserService _userService;
+        private readonly ILogger<AccountController> _logger;
 
-        public AccountController(ApplicationDbContext context, IPasswordHasher<User> passwordHasher, UserService userService)
+        public AccountController(ApplicationDbContext context, IPasswordHasher<User> passwordHasher, UserService userService, ILogger<AccountController> logger)
         {
             _context = context;
             _passwordHasher = passwordHasher;
             _userService = userService;
+            _logger = logger;
         }
 
         [AllowAnonymous]
         [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
+            _logger.LogInformation("Login request received for email: {Email}", request.Email);
+
             var user = await _context.Users.SingleOrDefaultAsync(u => u.Email == request.Email);
 
             if (user == null)
             {
+                _logger.LogWarning("Login failed for email: {Email} - User not found", request.Email);
                 return Unauthorized(new { message = "Invalid credentials." });
             }
 
-            // Check if it's the user's first login
             if (user.IsFirstLogin)
             {
-                // For admin login
                 if (user.Role == "Admin")
                 {
-                    // Verify that the provided email matches the email in the database
-                    if (request.Email != user.Email)
+                    if (request.Email != user.Email || request.Password != user.Pwd)
                     {
+                        _logger.LogWarning("First login failed for admin email: {Email} - Invalid credentials", request.Email);
                         return Unauthorized(new { message = "Invalid credentials." });
                     }
 
-                    // Check if the provided password matches the password in the database (initially set for the admin)
-                    if (request.Password != user.Pwd)
-                    {
-                        return Unauthorized(new { message = "Invalid credentials." });
-                    }
-
-                    // If credentials are correct, redirect to reset password page
+                    _logger.LogInformation("First login success for admin email: {Email}", request.Email);
                     return Ok(new { message = "First login. Redirect to reset credentials.", redirectUrl = "/reset-password" });
                 }
-                else // For guest login
+                else if (user.Role == "ContentManager" || user.Role == "Trainee")
                 {
-                    // Verify the OTP entered by the user
-                    if (request.Password != user.OTP)
+                    if (request.Password != user.OTP || request.Email != user.Email || user.OTPExpiration < DateTime.Now)
                     {
+                        _logger.LogWarning("First login failed for {Role} email: {Email} - Invalid OTP or expired", user.Role, request.Email);
                         return Unauthorized(new { message = "Invalid OTP." });
                     }
 
-                    // Verify that the email provided during login matches the email to which the OTP was sent
-                    if (request.Email != user.Email)
-                    {
-                        return Unauthorized(new { message = "Invalid email." });
-                    }
-
-                    // If OTP is correct and email matches, redirect to reset password page
+                    _logger.LogInformation("First login success for {Role} email: {Email}", user.Role, request.Email);
                     return Ok(new { message = "First login. Redirect to reset credentials.", redirectUrl = "/reset-password" });
                 }
             }
-            else // For subsequent logins
+            else
             {
-                // For admin login, after resetting password
-                if (user.Role == "Admin")
+                if (_passwordHasher.VerifyHashedPassword(user, user.Pwd, request.Password) == PasswordVerificationResult.Failed)
                 {
-                    // Verify that the provided email matches the email in the database
-                    if (request.Email != user.Email)
-                    {
-                        return Unauthorized(new { message = "Invalid credentials." });
-                    }
-
-                    // Check if the provided password matches the password in the database (initially set for the admin)
-                    if (_passwordHasher.VerifyHashedPassword(user, user.Pwd, request.Password) == PasswordVerificationResult.Failed)
-                    {
-                        return Unauthorized(new { message = "Invalid credentials." });
-                    }
-                }
-                else // For guest login
-                {
-                    // Verify hashed password
-                    if (_passwordHasher.VerifyHashedPassword(user, user.Pwd, request.Password) == PasswordVerificationResult.Failed)
-                    {
-                        return Unauthorized(new { message = "Invalid credentials." });
-                    }
+                    _logger.LogWarning("Subsequent login failed for email: {Email} - Invalid password", request.Email);
+                    return Unauthorized(new { message = "Invalid credentials." });
                 }
             }
 
+            _logger.LogInformation("Login success for email: {Email}", request.Email);
             return Ok(new { message = "Login successful." });
         }
 
@@ -108,14 +84,18 @@ namespace LoginApp.Controllers
         [HttpPost("ResetPassword")]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
         {
+            _logger.LogInformation("Reset password request received for email: {Email}", request.Email);
+
             var user = await _context.Users.SingleOrDefaultAsync(u => u.Email == request.Email);
             if (user == null)
             {
+                _logger.LogWarning("Reset password failed for email: {Email} - User not found", request.Email);
                 return NotFound(new { message = "User not found." });
             }
 
             if (request.NewPassword != request.ConfirmPassword)
             {
+                _logger.LogWarning("Reset password failed for email: {Email} - Passwords do not match", request.Email);
                 return BadRequest(new { message = "Passwords do not match." });
             }
 
@@ -125,6 +105,7 @@ namespace LoginApp.Controllers
             _context.Users.Update(user);
             await _context.SaveChangesAsync();
 
+            _logger.LogInformation("Reset password success for email: {Email}", request.Email);
             return Ok(new { message = "Password reset successful." });
         }
 
@@ -132,9 +113,18 @@ namespace LoginApp.Controllers
         [HttpPost("SignUp")]
         public async Task<IActionResult> SignUp([FromBody] SignUpRequest request)
         {
+            _logger.LogInformation("Sign up request received for email: {Email}", request.Email);
+
+            if (request.Password != request.ConfirmPassword)
+            {
+                _logger.LogWarning("Sign up failed for email: {Email} - Passwords do not match", request.Email);
+                return BadRequest(new { message = "Passwords do not match." });
+            }
+
             var existingUser = await _context.Users.SingleOrDefaultAsync(u => u.Email == request.Email);
             if (existingUser != null)
             {
+                _logger.LogWarning("Sign up failed for email: {Email} - Email already registered", request.Email);
                 return BadRequest(new { message = "Email already registered." });
             }
 
@@ -144,19 +134,25 @@ namespace LoginApp.Controllers
                 LastName = request.LastName,
                 Email = request.Email,
                 Role = "Guest",
-                IsFirstLogin = true,
-                HasAccess = true
+                IsFirstLogin = false,
+                HasAccess = true,
+                OTP = ""
             };
 
-            await _userService.AddUserAsync(user);
+            user.Pwd = _passwordHasher.HashPassword(user, request.Password);
 
-            return Ok(new { message = "Sign-up successful. OTP has been sent to your email." });
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+
+            _logger.LogInformation("Sign up success for email: {Email}", request.Email);
+            return Ok(new { message = "Sign-up successful." });
         }
 
         [Authorize]
         [HttpGet("ProtectedEndpoint")]
         public IActionResult ProtectedEndpoint()
         {
+            _logger.LogInformation("Protected endpoint accessed by user ID: {UserId}", User.Identity.Name);
             return Ok(new { message = "You have access to this protected endpoint." });
         }
 
@@ -178,6 +174,8 @@ namespace LoginApp.Controllers
             public string FirstName { get; set; } = string.Empty;
             public string LastName { get; set; } = string.Empty;
             public string Email { get; set; } = string.Empty;
+            public string Password { get; set; } = string.Empty;
+            public string ConfirmPassword { get; set; } = string.Empty;
         }
     }
 }
