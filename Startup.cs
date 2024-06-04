@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Microsoft.Extensions.Logging;
 
 public class Startup
 {
@@ -26,7 +27,7 @@ public class Startup
     {
         var connectionString = Configuration.GetConnectionString("DefaultConnection");
         services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseSqlServer(connectionString));
+            options.UseSqlServer(connectionString)); // Use SqlServer instead of UseMySql
 
         services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
         services.AddScoped<UserService>();
@@ -40,6 +41,7 @@ public class Startup
         });
 
         services.AddControllers();
+        services.AddLogging();
 
         var key = Encoding.ASCII.GetBytes(Configuration["Jwt:Key"]);
         services.AddAuthentication(x =>
@@ -49,7 +51,7 @@ public class Startup
         })
         .AddJwtBearer(x =>
         {
-            x.RequireHttpsMetadata = true;
+            x.RequireHttpsMetadata = false;
             x.SaveToken = true;
             x.TokenValidationParameters = new TokenValidationParameters
             {
@@ -84,7 +86,7 @@ public class Startup
         });
     }
 
-    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
     {
         if (env.IsDevelopment())
         {
@@ -96,7 +98,9 @@ public class Startup
             app.UseHsts();
         }
 
-        app.UseHttpsRedirection();
+        // Comment out this line if HTTPS is causing issues
+         app.UseHttpsRedirection();
+
         app.UseStaticFiles();
 
         app.UseRouting();
@@ -111,7 +115,7 @@ public class Startup
             endpoints.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
-            endpoints.MapControllers(); // Ensure this line is included to map attribute-routed controllers
+            endpoints.MapControllers();
         });
 
         app.UseSwagger();
@@ -120,4 +124,6 @@ public class Startup
             c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
         });
     }
+
 }
+
