@@ -24,7 +24,8 @@ namespace LoginApp.Models
 
         public bool IsFirstLogin { get; set; }
 
-        public string? OTP { get; set; }  // Nullable type since it might not always be set
+        public string OTP { get; set; }  // Ensure OTP property is not nullable
+
 
         public DateTime? OTPExpiration { get; set; }  // Nullable type since it might not always be set
 
