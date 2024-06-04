@@ -1,6 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using LoginApp.Models;
-using System.Collections.Generic;
 
 namespace LoginApp.Data
 {
