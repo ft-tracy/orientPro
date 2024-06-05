@@ -19,6 +19,8 @@ class SignUpActivity : AppCompatActivity() {
     private lateinit var etFirstName: EditText
     private lateinit var etLastName: EditText
     private lateinit var etEmail: EditText
+    private lateinit var etPassword: EditText
+    private lateinit var etConfirmPassword: EditText
     private lateinit var btnSignupHome: Button
     private lateinit var btnBack: ImageButton
 
@@ -29,6 +31,8 @@ class SignUpActivity : AppCompatActivity() {
         etFirstName = findViewById(R.id.etFirstName)
         etLastName = findViewById(R.id.etLastName)
         etEmail = findViewById(R.id.etEmail)
+        etPassword = findViewById(R.id.etPassword)
+        etConfirmPassword = findViewById(R.id.etConfirmPassword)
         btnSignupHome = findViewById(R.id.btnSignupHome)
         btnBack = findViewById(R.id.btnBack)
 
@@ -45,13 +49,20 @@ class SignUpActivity : AppCompatActivity() {
         val firstName = etFirstName.text.toString().trim()
         val lastName = etLastName.text.toString().trim()
         val email = etEmail.text.toString().trim()
+        val password = etPassword.text.toString().trim()
+        val confirmPassword = etConfirmPassword.text.toString().trim()
 
-        if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty()) {
+        if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
             Toast.makeText(this, "All fields are required", Toast.LENGTH_SHORT).show()
             return
         }
 
-        val signUpRequest = SignUpRequest(email, firstName, lastName)
+        if (password != confirmPassword) {
+            Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val signUpRequest = SignUpRequest(email, firstName, lastName, password)
         APIClient.instance.signUp(signUpRequest).enqueue(object : Callback<SignUpResponse> {
             override fun onResponse(call: Call<SignUpResponse>, response: Response<SignUpResponse>) {
                 if (response.isSuccessful && response.body()?.success == true) {
