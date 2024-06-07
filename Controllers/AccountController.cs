@@ -7,7 +7,12 @@ using LoginApp.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Configuration;
 using System;
+using System.Security.Claims;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Microsoft.IdentityModel.JsonWebTokens;
 
 namespace LoginApp.Controllers
 {
@@ -19,13 +24,15 @@ namespace LoginApp.Controllers
         private readonly IPasswordHasher<User> _passwordHasher;
         private readonly UserService _userService;
         private readonly ILogger<AccountController> _logger;
+        private readonly IConfiguration _configuration;
 
-        public AccountController(ApplicationDbContext context, IPasswordHasher<User> passwordHasher, UserService userService, ILogger<AccountController> logger)
+        public AccountController(ApplicationDbContext context, IPasswordHasher<User> passwordHasher, UserService userService, ILogger<AccountController> logger, IConfiguration configuration)
         {
             _context = context;
             _passwordHasher = passwordHasher;
             _userService = userService;
             _logger = logger;
+            _configuration = configuration;
         }
 
         [AllowAnonymous]
@@ -42,29 +49,25 @@ namespace LoginApp.Controllers
                 return Unauthorized(new { message = "Invalid credentials." });
             }
 
-            if (user.IsFirstLogin)
+            bool isValidUser = false;
+            bool isFirstLogin = user.IsFirstLogin;
+
+            if (isFirstLogin)
             {
-                if (user.Role == "Admin")
+                if (user.Role == "Admin" && request.Email == user.Email && request.Password == user.Pwd)
                 {
-                    if (request.Email != user.Email || request.Password != user.Pwd)
-                    {
-                        _logger.LogWarning("First login failed for admin email: {Email} - Invalid credentials", request.Email);
-                        return Unauthorized(new { message = "Invalid credentials." });
-                    }
-
-                    _logger.LogInformation("First login success for admin email: {Email}", request.Email);
-                    return Ok(new { message = "First login. Redirect to reset credentials.", redirectUrl = "/reset-password" });
+                    isValidUser = true;
                 }
-                else if (user.Role == "ContentManager" || user.Role == "Trainee")
+                else if ((user.Role == "ContentManager" || user.Role == "Trainee") &&
+                         request.Password == user.OTP && request.Email == user.Email && user.OTPExpiration >= DateTime.Now)
                 {
-                    if (request.Password != user.OTP || request.Email != user.Email || user.OTPExpiration < DateTime.Now)
-                    {
-                        _logger.LogWarning("First login failed for {Role} email: {Email} - Invalid OTP or expired", user.Role, request.Email);
-                        return Unauthorized(new { message = "Invalid OTP." });
-                    }
+                    isValidUser = true;
+                }
 
-                    _logger.LogInformation("First login success for {Role} email: {Email}", user.Role, request.Email);
-                    return Ok(new { message = "First login. Redirect to reset credentials.", redirectUrl = "/reset-password" });
+                if (!isValidUser)
+                {
+                    _logger.LogWarning("First login failed for {Role} email: {Email} - Invalid credentials", user.Role, request.Email);
+                    return Unauthorized(new { message = "Invalid credentials." });
                 }
             }
             else
@@ -74,11 +77,59 @@ namespace LoginApp.Controllers
                     _logger.LogWarning("Subsequent login failed for email: {Email} - Invalid password", request.Email);
                     return Unauthorized(new { message = "Invalid credentials." });
                 }
+                isValidUser = true;
             }
 
-            _logger.LogInformation("Login success for email: {Email}", request.Email);
-            return Ok(new { message = "Login successful." });
+            if (isValidUser)
+            {
+                var tokenString = GenerateJwtToken(user);
+                _logger.LogInformation("Login success for email: {Email}", request.Email);
+
+                return Ok(new { token = tokenString, isFirstLogin = isFirstLogin });
+            }
+
+            return Unauthorized(new { message = "Invalid credentials." });
         }
+
+        private string GenerateJwtToken(User user)
+        {
+            var jwtKey = _configuration["Jwt:Key"];
+            if (string.IsNullOrEmpty(jwtKey))
+            {
+                _logger.LogError("JWT Key is not configured.");
+                throw new Exception("JWT Key is not configured.");
+            }
+
+            _logger.LogDebug("JWT Key for token generation: {Key}", jwtKey);
+
+            var tokenHandler = new JsonWebTokenHandler();
+            var key = Encoding.ASCII.GetBytes(jwtKey);
+            var signingKey = new SymmetricSecurityKey(key);
+            var signingCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256);
+
+            var claims = new[]
+     {
+        new Claim(ClaimTypes.Name, user.Email),
+        new Claim(ClaimTypes.Role, user.Role),
+        new Claim(ClaimTypes.NameIdentifier, user.UniqueID.ToString()) // Assuming UniqueID is the user's identifier in the database
+    };
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(claims),
+                Expires = DateTime.UtcNow.AddHours(8),
+                SigningCredentials = signingCredentials,
+                Audience = "https://orientpro.onrender.com", // Add this line
+                Issuer = "https://04a3-41-90-101-26.ngrok-free.app" // Add this line
+            };
+
+            var tokenString = tokenHandler.CreateToken(tokenDescriptor);
+
+            _logger.LogDebug("Generated JWT Token: {Token}", tokenString);
+            return tokenString;
+        }
+
+
 
         [AllowAnonymous]
         [HttpPost("ResetPassword")]
@@ -134,7 +185,7 @@ namespace LoginApp.Controllers
                 LastName = request.LastName,
                 Email = request.Email,
                 Role = "Guest",
-                IsFirstLogin = false,
+                IsFirstLogin = false, // Assuming all newly registered users are required to reset password
                 HasAccess = true,
                 OTP = ""
             };
@@ -144,14 +195,23 @@ namespace LoginApp.Controllers
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
+            // Generate JWT token
+            var tokenString = GenerateJwtToken(user);
+
             _logger.LogInformation("Sign up success for email: {Email}", request.Email);
-            return Ok(new { message = "Sign-up successful." });
+
+            // Return token in the response
+            return Ok(new { message = "Sign-up successful.", token = tokenString });
         }
 
         [Authorize]
         [HttpGet("ProtectedEndpoint")]
+        [Authorize(Roles = "Admin")]
         public IActionResult ProtectedEndpoint()
         {
+            var token = HttpContext.Request.Headers["Authorization"].ToString().Split(" ").Last();
+            _logger.LogInformation("Token in ProtectedEndpoint: {Token}", token);
+
             _logger.LogInformation("Protected endpoint accessed by user ID: {UserId}", User.Identity.Name);
             return Ok(new { message = "You have access to this protected endpoint." });
         }
