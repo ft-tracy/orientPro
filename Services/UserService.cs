@@ -32,7 +32,7 @@ namespace LoginApp.Services
             if (user.Role == "ContentManager" || user.Role == "Trainee")
             {
                 user.OTP = GenerateOtp();
-                user.OTPExpiration = DateTime.UtcNow.AddHours(4);
+                user.OTPExpiration = DateTime.UtcNow.AddHours(5);
                 user.IsFirstLogin = true;
             }
             else
@@ -44,6 +44,21 @@ namespace LoginApp.Services
             await _context.SaveChangesAsync();
             _logger.LogInformation("User added successfully: {Email}", user.Email);
             SendOtpEmail(user, isCreatedByAdmin, isWebApp);
+        }
+
+        public User GetUserById(string userId)
+        {
+            // Parse the userId string to an integer
+            if (!int.TryParse(userId, out int parsedUserId))
+            {
+                _logger.LogError("Failed to parse userId to integer.");
+                return null; // Return null if parsing fails
+            }
+
+            _logger.LogInformation("Retrieving user by ID: {UserId}", parsedUserId);
+
+            // Compare the parsed integer userId with UniqueID
+            return _context.Users.FirstOrDefault(u => u.UniqueID == parsedUserId);
         }
 
         private string GenerateOtp(int length = 6)
