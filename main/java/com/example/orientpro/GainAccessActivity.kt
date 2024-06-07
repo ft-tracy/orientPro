@@ -37,11 +37,11 @@ class GainAccessActivity : AppCompatActivity() {
         btnGetAccess.setOnClickListener {
             val email = etEmail.text.toString()
             val otp = etPassword.text.toString()
-            validateOtp(email, otp)
+            //validateOtp(email, otp)
         }
     }
 
-    private fun validateOtp(email: String, otp: String) {
+    /*private fun validateOtp(email: String, otp: String) {
         val otpRequest = OTPRequest(email, otp)
         APIClient.instance.validateOtp(otpRequest).enqueue(object : Callback<OTPResponse> {
             override fun onResponse(call: Call<OTPResponse>, response: Response<OTPResponse>) {
@@ -59,5 +59,5 @@ class GainAccessActivity : AppCompatActivity() {
                 Toast.makeText(this@GainAccessActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
-    }
+    }*/
 }

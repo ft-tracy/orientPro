@@ -49,7 +49,7 @@ class UpdateUserInfoActivity : AppCompatActivity() {
             return
         }
 
-        val updateUserInfoRequest = UpdateUserInfoRequest(email, password, confirmPassword)
+        /*val updateUserInfoRequest = UpdateUserInfoRequest(email, password, confirmPassword)
         APIClient.instance.updateUserInfo(updateUserInfoRequest).enqueue(object : Callback<UpdateUserInfoResponse> {
             override fun onResponse(call: Call<UpdateUserInfoResponse>, response: Response<UpdateUserInfoResponse>) {
                 if (response.isSuccessful && response.body()?.success == true) {
@@ -65,6 +65,6 @@ class UpdateUserInfoActivity : AppCompatActivity() {
             override fun onFailure(call: Call<UpdateUserInfoResponse>, t: Throwable) {
                 Toast.makeText(this@UpdateUserInfoActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
             }
-        })
+        })*/
     }
 }

@@ -2,17 +2,15 @@ package com.example.orientpro
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.orientpro.utils.APIClient
+import com.example.orientpro.repository.AuthRepository
 import com.example.orientpro.utils.SignUpRequest
-import com.example.orientpro.utils.SignUpResponse
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.example.orientpro.utils.Result
 
 class SignUpActivity : AppCompatActivity() {
 
@@ -23,6 +21,8 @@ class SignUpActivity : AppCompatActivity() {
     private lateinit var etConfirmPassword: EditText
     private lateinit var btnSignupHome: Button
     private lateinit var btnBack: ImageButton
+
+    private lateinit var authRepository: AuthRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,6 +35,8 @@ class SignUpActivity : AppCompatActivity() {
         etConfirmPassword = findViewById(R.id.etConfirmPassword)
         btnSignupHome = findViewById(R.id.btnSignupHome)
         btnBack = findViewById(R.id.btnBack)
+
+        authRepository = AuthRepository(this)
 
         btnSignupHome.setOnClickListener {
             signUpUser()
@@ -62,22 +64,37 @@ class SignUpActivity : AppCompatActivity() {
             return
         }
 
-        val signUpRequest = SignUpRequest(email, firstName, lastName, password)
-        APIClient.instance.signUp(signUpRequest).enqueue(object : Callback<SignUpResponse> {
-            override fun onResponse(call: Call<SignUpResponse>, response: Response<SignUpResponse>) {
-                if (response.isSuccessful && response.body()?.success == true) {
-                    Toast.makeText(this@SignUpActivity, "Sign up successful", Toast.LENGTH_SHORT).show()
-                    val intent = Intent(this@SignUpActivity, HomepageActivity::class.java)
-                    startActivity(intent)
-                    finish()
-                } else {
-                    Toast.makeText(this@SignUpActivity, "Sign up failed: ${response.body()?.message}", Toast.LENGTH_SHORT).show()
+        val signUpRequest = SignUpRequest(firstName, lastName, email, password, confirmPassword)
+        Log.d("SignUpRequest", "Request: $signUpRequest")
+
+        authRepository.signUp(signUpRequest) { result ->
+            when (result) {
+                is Result.Loading -> {
+                    // Show loading indicator if needed
+                }
+                is Result.Success -> {
+                    val signUpResponse = result.data
+                    if (signUpResponse.success) {
+                        Toast.makeText(this@SignUpActivity, "Sign up successful", Toast.LENGTH_SHORT).show()
+                        val intent = Intent(this@SignUpActivity, HomepageActivity::class.java)
+                        startActivity(intent)
+                        finish()
+                    } else {
+                        val message = signUpResponse.message ?: "Sign up failed with no message"
+                        Log.e("SignUpResponse", "Failure: $message")
+                        Toast.makeText(this@SignUpActivity, "Sign up failed: $message", Toast.LENGTH_SHORT).show()
+
+                        // Check if user creation was actually successful
+                        if (signUpResponse.message.contains("Sign-up successful", ignoreCase = true)) {
+                            Toast.makeText(this@SignUpActivity, "User was created despite the failure response", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+                is Result.Error -> {
+                    Log.e("SignUpResponse", "Error: ${result.exception.message}", result.exception)
+                    Toast.makeText(this@SignUpActivity, "Error: ${result.exception.message}", Toast.LENGTH_SHORT).show()
                 }
             }
-
-            override fun onFailure(call: Call<SignUpResponse>, t: Throwable) {
-                Toast.makeText(this@SignUpActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
-            }
-        })
+        }
     }
 }

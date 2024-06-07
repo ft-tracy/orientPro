@@ -42,21 +42,25 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun loginUser(email: String, password: String) {
+
+        if (email.isEmpty() || password.isEmpty()) {
+            Toast.makeText(this, "All fields are required", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         authRepository.login(email, password) { result ->
             when (result) {
                 is Result.Loading -> {
-                    // Show loading indicator if necessary
+                    // Show loading indicator if needed
                 }
                 is Result.Success -> {
-                    // Navigate to HomepageActivity
-                    val intent = Intent(this, HomepageActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    Toast.makeText(this@LoginActivity, "Login successful", Toast.LENGTH_SHORT).show()
+                    val intent = Intent(this@LoginActivity, HomepageActivity::class.java)
                     startActivity(intent)
-                    Toast.makeText(this, "Login successful", Toast.LENGTH_SHORT).show()
+                    finish()
                 }
                 is Result.Error -> {
-                    // Show error message
-                    Toast.makeText(this, "Login failed: ${result.exception.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@LoginActivity, "Login failed: ${result.exception.message}", Toast.LENGTH_SHORT).show()
                 }
             }
         }
