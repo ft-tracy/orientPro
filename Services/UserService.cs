@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
@@ -21,7 +22,7 @@ namespace LoginApp.Services
             _logger = logger;
         }
 
-        public async Task AddUserAsync(User user, bool isCreatedByAdmin = false, bool isWebApp = true)
+        public async Task AddUserAsync(User user)
         {
             if (user == null || string.IsNullOrWhiteSpace(user.Email))
             {
@@ -43,32 +44,61 @@ namespace LoginApp.Services
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
             _logger.LogInformation("User added successfully: {Email}", user.Email);
-            SendOtpEmail(user, isCreatedByAdmin, isWebApp);
+            SendOtpEmail(user);
         }
 
-        public User GetUserById(string userId)
+        public async Task<List<User>> GetAllUsersAsync()
         {
-            // Parse the userId string to an integer
+            _logger.LogInformation("Retrieving all users.");
+            return await _context.Users.ToListAsync();
+        }
+
+        public async Task<User> GetUserByIdAsync(string userId)
+        {
             if (!int.TryParse(userId, out int parsedUserId))
             {
                 _logger.LogError("Failed to parse userId to integer.");
-                return null; // Return null if parsing fails
+                return null;
             }
 
             _logger.LogInformation("Retrieving user by ID: {UserId}", parsedUserId);
-
-            // Compare the parsed integer userId with UniqueID
-            return _context.Users.FirstOrDefault(u => u.UniqueID == parsedUserId);
+            return await _context.Users.FirstOrDefaultAsync(u => u.UniqueID == parsedUserId);
         }
 
-        private string GenerateOtp(int length = 6)
+        public async Task UpdateUserAsync(User user)
+        {
+            if (user == null || string.IsNullOrWhiteSpace(user.Email))
+            {
+                _logger.LogWarning("Invalid user or email during UpdateUserAsync");
+                throw new ArgumentException("Invalid user or email.");
+            }
+
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+            _logger.LogInformation("User updated successfully: {Email}", user.Email);
+        }
+
+        public async Task DeleteUserAsync(User user)
+        {
+            if (user == null)
+            {
+                _logger.LogWarning("Invalid user during DeleteUserAsync");
+                throw new ArgumentException("Invalid user.");
+            }
+
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
+            _logger.LogInformation("User deleted successfully: {Email}", user.Email);
+        }
+
+        public string GenerateOtp(int length = 6)
         {
             var random = new Random();
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789";
             return new string(Enumerable.Repeat(chars, length).Select(s => s[random.Next(s.Length)]).ToArray());
         }
 
-        private void SendOtpEmail(User user, bool isCreatedByAdmin, bool isWebApp)
+        public void SendOtpEmail(User user)
         {
             if (user.OTP == null)
             {
