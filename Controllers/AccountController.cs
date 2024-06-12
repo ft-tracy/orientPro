@@ -85,7 +85,7 @@ namespace LoginApp.Controllers
                 var tokenString = GenerateJwtToken(user);
                 _logger.LogInformation("Login success for email: {Email}", request.Email);
 
-                return Ok(new { token = tokenString, isFirstLogin = isFirstLogin });
+                return Ok(new { message = "Login successful.", token = tokenString, isFirstLogin = isFirstLogin });
             }
 
             return Unauthorized(new { message = "Invalid credentials." });
@@ -117,7 +117,7 @@ namespace LoginApp.Controllers
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.UtcNow.AddHours(8),
+                Expires = DateTime.UtcNow.AddHours(28),
                 SigningCredentials = signingCredentials,
                 Audience = "https://orientpro.onrender.com", // Add this line
                 Issuer = "https://04a3-41-90-101-26.ngrok-free.app" // Add this line
@@ -216,6 +216,54 @@ namespace LoginApp.Controllers
             return Ok(new { message = "You have access to this protected endpoint." });
         }
 
+        [AllowAnonymous]
+        [HttpPost("SendOTP")]
+        public async Task<IActionResult> SendOTP([FromBody] OtpRequest request)
+        {
+            _logger.LogInformation("OTP request received for email: {Email}", request.Email);
+
+            var user = await _context.Users.SingleOrDefaultAsync(u => u.Email == request.Email);
+            if (user == null)
+            {
+                _logger.LogWarning("OTP request failed for email: {Email} - User not found", request.Email);
+                return NotFound(new { message = "User not found." });
+            }
+
+            user.OTP = _userService.GenerateOtp();
+            user.OTPExpiration = DateTime.UtcNow.AddHours(1); // OTP valid for 1 hour
+
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+
+            _userService.SendOtpEmail(user);
+
+            _logger.LogInformation("OTP sent successfully to email: {Email}", request.Email);
+            return Ok(new { message = "OTP sent successfully." });
+        }
+
+        [AllowAnonymous]
+        [HttpPost("VerifyOTP")]
+        public async Task<IActionResult> VerifyOTP([FromBody] VerifyOtpRequest request)
+        {
+            _logger.LogInformation("OTP verification request received for email: {Email}", request.Email);
+
+            var user = await _context.Users.SingleOrDefaultAsync(u => u.Email == request.Email && u.OTP == request.OTP);
+            if (user == null || user.OTPExpiration < DateTime.UtcNow)
+            {
+                _logger.LogWarning("OTP verification failed for email: {Email} - Invalid OTP or OTP expired", request.Email);
+                return Unauthorized(new { message = "Invalid OTP or OTP expired." });
+            }
+
+            user.OTP = null; // Clear the OTP after successful verification
+            user.OTPExpiration = null;
+
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+
+            _logger.LogInformation("OTP verified successfully for email: {Email}", request.Email);
+            return Ok(new { message = "OTP verified successfully." });
+        }
+
         public class LoginRequest
         {
             public string Email { get; set; } = string.Empty;
@@ -236,6 +284,17 @@ namespace LoginApp.Controllers
             public string Email { get; set; } = string.Empty;
             public string Password { get; set; } = string.Empty;
             public string ConfirmPassword { get; set; } = string.Empty;
+        }
+
+        public class OtpRequest
+        {
+            public string Email { get; set; } = string.Empty;
+        }
+
+        public class VerifyOtpRequest
+        {
+            public string Email { get; set; } = string.Empty;
+            public string OTP { get; set; } = string.Empty;
         }
     }
 }
