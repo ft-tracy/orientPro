@@ -1,0 +1,89 @@
+<HorizontalScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:padding="16dp">
+
+    <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+        <!-- Example course item -->
+        <androidx.cardview.widget.CardView
+                android:layout_width="97dp"
+                android:layout_height="99dp"
+                android:layout_marginEnd="10dp">
+
+            <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/rounded_image_button"
+                    android:contentDescription="course_image" />
+
+        </androidx.cardview.widget.CardView>
+
+        <!-- Repeat for additional courses -->
+        <!--<androidx.cardview.widget.CardView
+                android:layout_width="97dp"
+                android:layout_height="99dp"
+                android:layout_marginEnd="10dp">
+
+            <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/rounded_image_button"
+                    android:contentDescription="course_image" />
+
+        </androidx.cardview.widget.CardView>
+        <androidx.cardview.widget.CardView
+                android:layout_width="97dp"
+                android:layout_height="99dp"
+                android:layout_marginEnd="10dp">
+
+            <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/rounded_image_button"
+                    android:contentDescription="course_image" />
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+                android:layout_width="97dp"
+                android:layout_height="99dp"
+                android:layout_marginEnd="10dp">
+
+            <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/rounded_image_button"
+                    android:contentDescription="course_image" />
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+                android:layout_width="97dp"
+                android:layout_height="99dp"
+                android:layout_marginEnd="10dp">
+
+            <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/rounded_image_button"
+                    android:contentDescription="course_image" />
+
+        </androidx.cardview.widget.CardView>
+
+        &lt;!&ndash; Add More Courses Button &ndash;&gt;
+        <ImageButton
+                android:id="@+id/btn_add_course"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:src="@drawable/ic_add_circle"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="more_courses"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="10dp"/>-->
+
+    </LinearLayout>
+</HorizontalScrollView>

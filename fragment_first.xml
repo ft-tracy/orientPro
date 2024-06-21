@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="16dp">
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+        <!-- Header with back arrow and title -->
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+            <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_arrow_back"
+                    android:layout_gravity="start"
+                    android:contentDescription="back_arrow" />
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="40dp"
+                    android:text="Intro to Mobile App Development"
+                    android:layout_gravity="center_horizontal"
+                    android:textSize="18sp"
+                    android:textStyle="bold"/>
+        </LinearLayout>
+
+        <!-- Course image placeholder -->
+        <View
+                android:layout_width="match_parent"
+                android:layout_height="129dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="26dp"
+                android:backgroundTint="@color/grey"
+                android:background="@drawable/rounded_button" />
+
+        <!-- Course title and university -->
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Intro to Mobile App Development"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="By the University of Maryland College Park"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                android:textSize="14sp"
+                android:textColor="@android:color/darker_gray" />
+
+        <!-- Enroll button -->
+        <androidx.appcompat.widget.AppCompatButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="26dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginBottom="26dp"
+                android:text="Enroll"
+                android:backgroundTint="@color/black"
+                android:background="@drawable/rounded_button"
+                android:textColor="@android:color/white" />
+
+        <!-- What you'll learn section -->
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="What you'll Learn"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="- Introduction to Mobile App Development\n- Design using Android Studio\n- User Interface, Data Management and more."
+                android:textSize="14sp"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginTop="8dp" />
+
+        <!-- Course length -->
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                android:text="Course Length"
+                android:textSize="14sp"
+                android:textColor="@android:color/darker_gray" />
+
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="4 weeks"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                android:textSize="14sp" />
+
+        <!-- Reviews section -->
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Reviews"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+        <!-- Individual review items -->
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginTop="8dp">
+
+            <!-- Repeat this block for each review -->
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginTop="8dp">
+
+                <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:background="@android:color/darker_gray"
+                        android:layout_marginEnd="16dp"
+                        android:contentDescription="@string/profile_picture" />
+
+                <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                    <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="username"
+                            android:textStyle="bold" />
+
+                    <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="★★★★★"
+                            android:textColor="@android:color/holo_orange_dark"
+                            android:textSize="12sp" />
+
+                    <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="The Course is well Structured"
+                            android:textSize="14sp" />
+                </LinearLayout>
+            </LinearLayout>
+            <!-- End of review item block -->
+
+            <!-- More reviews can be added similarly -->
+
+        </LinearLayout>
+
+        <!-- Bottom Enroll Now button -->
+        <androidx.appcompat.widget.AppCompatButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginTop="16dp"
+                android:text="Enroll Now"
+                android:backgroundTint="@android:color/holo_orange_light"
+                android:background="@drawable/rounded_button"
+                android:textColor="@android:color/white" />
+
+    </LinearLayout>
+</ScrollView>

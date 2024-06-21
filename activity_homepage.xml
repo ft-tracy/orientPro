@@ -1,225 +1,158 @@
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                                   xmlns:app="http://schemas.android.com/apk/res-auto"
-                                                   xmlns:tools="http://schemas.android.com/tools"
-                                                   android:layout_width="match_parent"
-                                                   android:layout_height="match_parent"
-                                                   tools:context=".HomePageActivity">
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                           xmlns:app="http://schemas.android.com/apk/res-auto"
+                                           xmlns:tools="http://schemas.android.com/tools"
+                                           android:id="@+id/drawer_layout"
+                                           android:layout_width="match_parent"
+                                           android:layout_height="match_parent"
+                                           tools:context=".HomepageActivity">
 
-    <!-- ScrollView to enable scrolling -->
-    <ScrollView
+    <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-        <LinearLayout
+        <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
+                android:background="@color/dark_blue"
+                app:layout_constraintTop_toTopOf="parent"
+                app:title="Homepage"
+                app:titleTextColor="@android:color/white">
 
-            <!-- Settings Button -->
-            <ImageButton
-                    android:id="@+id/btn_settings"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:src="@drawable/ic_settings_icon"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="settings"
-                    android:padding="8dp"
-                    android:layout_gravity="start" /> <!-- Align to start (left) -->
-
-            <!-- Enrolled Courses Section -->
-            <TextView
-                    android:id="@+id/tv_enrolled_courses"
-                    android:layout_width="wrap_content"
+            <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Enrolled Courses"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:layout_marginTop="16dp" />
+                    android:orientation="horizontal">
 
-            <!-- Enrolled Course 1 -->
+                <ImageButton
+                        android:id="@+id/btn_settings"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:src="@drawable/ic_settings_icon"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="settings"
+                        android:padding="8dp"
+                        android:layout_gravity="start" />
+
+                <!--<View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                <ImageButton
+                        android:id="@+id/btn_profile"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_marginEnd="15dp"
+                        android:src="@drawable/ic_profile"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="profile"
+                        android:padding="8dp"/>-->
+            </LinearLayout>
+        </androidx.appcompat.widget.Toolbar>
+
+        <ScrollView
+                android:id="@+id/scrollView"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintTop_toBottomOf="@id/toolbar"
+                app:layout_constraintBottom_toTopOf="@id/bottom_navigation"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
             <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:layout_marginTop="10dp">
+                    android:padding="16dp">
 
-                <ImageView
-                        android:id="@+id/img_enrolled_course_1"
-                        android:layout_width="match_parent"
-                        android:layout_height="200dp"
-                        android:src="@drawable/courseimage1"
-                        android:layout_margin="10dp"
-                        android:contentDescription="course_image" />
-
-                <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Product and Service details"
-                        android:layout_marginStart="10dp" />
-
-                <ProgressBar
+                <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recycler_recent_courses"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:progress="100"
-                        android:layout_margin="10dp" />
-            </LinearLayout>
-
-            <!-- Enrolled Course 2 -->
-            <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginTop="10dp">
-
-                <ImageView
-                        android:id="@+id/img_enrolled_course_2"
-                        android:layout_width="match_parent"
-                        android:layout_height="200dp"
-                        android:src="@drawable/courseimage3"
-                        android:layout_margin="10dp"
-                        android:contentDescription="course_image" />
+                        tools:itemCount="1"
+                        tools:listitem="@layout/item_recent_course"/>
 
                 <TextView
+                        android:id="@+id/tv_similar_courses"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Health and Safety"
-                        android:layout_marginStart="10dp" />
+                        android:text="Similar Courses"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:layout_marginTop="16dp"/>
 
-                <ProgressBar
+                <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recycler_similar_courses"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:progress="100"
-                        android:layout_margin="10dp" />
-            </LinearLayout>
+                        tools:itemCount="1"
+                        tools:listitem="@layout/item_available_courses"/>
 
-            <!-- Available Courses Section -->
-            <TextView
-                    android:id="@+id/tv_available_courses"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Available Courses"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:layout_marginTop="16dp" />
-
-            <!-- Scrollable Available Courses -->
-            <HorizontalScrollView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:padding="10dp">
-
-                <LinearLayout
+                <TextView
+                        android:id="@+id/tv_weekly_progress"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                        android:text="Your progress this week"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="16dp"/>
 
-                    <ImageView
-                            android:layout_width="127dp"
-                            android:layout_height="127dp"
-                            android:src="@drawable/course_placeholder"
-                            android:layout_marginEnd="10dp"
-                            android:contentDescription="@string/course_image" />
-
-                    <ImageView
-                            android:layout_width="127dp"
-                            android:layout_height="127dp"
-                            android:src="@drawable/course_placeholder"
-                            android:layout_marginEnd="10dp"
-                            android:contentDescription="@string/course_image" />
-
-                    <ImageView
-                            android:layout_width="127dp"
-                            android:layout_height="127dp"
-                            android:src="@drawable/course_placeholder"
-                            android:layout_marginEnd="10dp"
-                            android:contentDescription="@string/course_image" />
-
-                    <ImageView
-                            android:layout_width="127dp"
-                            android:layout_height="127dp"
-                            android:src="@drawable/course_placeholder"
-                            android:contentDescription="@string/course_image" />
-
-                    <!-- Add More Courses Button -->
-                    <ImageButton
-                            android:id="@+id/btn_add_course"
-                            android:layout_width="50dp"
-                            android:layout_height="50dp"
-                            android:src="@drawable/add_circle"
-                            android:background="?attr/selectableItemBackgroundBorderless"
-                            android:contentDescription="more_courses"
-                            android:layout_gravity="center_vertical"
-                            android:layout_marginStart="10dp" />
-                </LinearLayout>
-            </HorizontalScrollView>
-
-            <!-- Helpful Tips Section -->
-            <TextView
-                    android:id="@+id/tv_helpful_tips"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Helpful Tips"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:layout_marginTop="16dp" />
-
-            <!-- Helpful Tip 1 -->
-            <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="10dp"
-                    android:padding="10dp">
-
-                <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:src="@drawable/ic_user_placeholder"
-                        android:layout_marginEnd="8dp" />
-
-                <TextView
-                        android:layout_width="0dp"
+                <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recycler_weekly_progress"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ut posuere sapien, ac tempor urna."
-                        android:layout_weight="1" />
+                        tools:itemCount="1"
+                        tools:listitem="@layout/item_weekly_progress"/>
 
                 <TextView
+                        android:id="@+id/tv_helpful_tips"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="⭐ 20"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginStart="8dp" />
-            </LinearLayout>
+                        android:text="Helpful Tips"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:layout_marginTop="16dp"/>
 
-            <!-- Helpful Tip 2 -->
-            <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="10dp"
-                    android:padding="10dp">
-
-                <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:src="@drawable/ic_user_placeholder"
-                        android:layout_marginEnd="8dp" />
-
-                <TextView
-                        android:layout_width="0dp"
+                <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recycler_other_tips"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ut posuere sapien, ac tempor urna."
-                        android:layout_weight="1" />
+                        tools:itemCount="4"
+                        tools:listitem="@layout/item_helpful_tips"/>
 
-                <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="⭐ 5"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginStart="8dp" />
             </LinearLayout>
-        </LinearLayout>
-    </ScrollView>
-</androidx.constraintlayout.widget.ConstraintLayout>
+        </ScrollView>
+
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+                android:id="@+id/bottom_navigation"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:background="#FC9E12"
+                app:menu="@menu/bottom_nav_menu"
+                app:layout_constraintTop_toBottomOf="@+id/scrollView"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.google.android.material.navigation.NavigationView
+            android:id="@+id/nav_view"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            app:menu="@menu/settings_nav_menu">
+        <include layout="@layout/nav_settings" />
+    </com.google.android.material.navigation.NavigationView>
+
+
+    <FrameLayout
+            android:id="@+id/blur_overlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:background="@color/black_transparent" />
+
+</androidx.drawerlayout.widget.DrawerLayout>
