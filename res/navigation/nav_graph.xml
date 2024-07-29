@@ -1,0 +1,66 @@
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/navigation_home">
+
+    <fragment
+        android:id="@+id/navigation_home"
+        android:name="com.example.orientprov1.view.HomeFragment"
+        android:label="Home" />
+
+    <fragment
+        android:id="@+id/navigation_quiz"
+        android:name="com.example.orientprov1.view.QuizFragment"
+        android:label="Quiz" />
+
+    <fragment
+        android:id="@+id/navigation_course"
+        android:name="com.example.orientprov1.view.CoursePageFragment"
+        android:label="Course" />
+
+    <fragment
+        android:id="@+id/navigation_certificate"
+        android:name="com.example.orientprov1.view.CertificateFragment"
+        android:label="Certificate" />
+
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.example.orientprov1.view.ProfileFragment"
+        android:label="Profile"
+        tools:layout="@layout/fragment_profile" />
+
+    <activity
+        android:id="@+id/loginActivity"
+        android:name="com.example.orientprov1.view.LoginActivity"
+        android:label="Login"
+        tools:layout="@layout/activity_login" />
+
+    <activity
+        android:id="@+id/updateUserInfoActivity"
+        android:name="com.example.orientprov1.view.UpdateUserInfoActivity"
+        android:label="UpdateUserinfo"
+        tools:layout="@layout/activity_update_user_info"/>
+
+    <fragment
+        android:id="@+id/settingsView"
+        android:name="com.example.orientprov1.view.SettingsView"
+        android:label="Settings"
+        tools:layout="@layout/nav_settings">
+        <action
+            android:id="@+id/action_settingsView_to_profileFragment"
+            app:destination="@id/profileFragment" />
+        <action
+            android:id="@+id/action_settingsView_to_updateUserInfoActivity"
+            app:destination="@id/updateUserInfoActivity"/>
+        <action
+            android:id="@+id/action_settingsView_to_loginActivity"
+            app:destination="@id/loginActivity"
+            app:popUpTo="@id/loginActivity"
+            app:popUpToInclusive="true"/>
+    </fragment>
+
+
+
+
+</navigation>

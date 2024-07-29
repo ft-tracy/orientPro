@@ -1,0 +1,24 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+            android:id="@+id/navigation_home"
+            android:icon="@drawable/home"
+            android:title="Home"/>
+
+    <item
+            android:id="@+id/navigation_quiz"
+            android:icon="@drawable/quiz"
+            android:title="Quiz"/>
+
+    <item
+            android:id="@+id/navigation_course"
+            android:icon="@drawable/ic_course"
+            android:title="Course"/>
+    <item
+            android:id="@+id/navigation_certificate"
+            android:icon="@drawable/cert"
+            android:title="Certificate"/>
+    <item
+            android:id="@+id/navigation_settings"
+            android:icon="@drawable/ic_settings_icon"
+            android:title="Settings"/>
+</menu>
