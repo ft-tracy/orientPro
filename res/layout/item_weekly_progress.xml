@@ -1,0 +1,53 @@
+<!-- res/layout/item_weekly_progress.xml -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="100dp"
+              android:orientation="horizontal"
+              android:layout_gravity="center_horizontal"
+              android:padding="8dp"
+              android:background="@drawable/weeklyprogressbackground">
+
+    <TextView
+            android:id="@+id/tv_monday"
+            android:layout_gravity="center"
+            style="@style/DayCircle"
+            android:text="M"
+    />
+
+    <TextView
+            android:id="@+id/tv_tuesday"
+            android:layout_gravity="center"
+            style="@style/DayCircle"
+            android:text="T"/>
+
+    <TextView
+            android:id="@+id/tv_wednesday"
+            android:layout_gravity="center"
+            style="@style/DayCircle"
+            android:text="W"/>
+
+    <TextView
+            android:id="@+id/tv_thursday"
+            android:layout_gravity="center"
+            style="@style/DayCircle"
+            android:text="T"/>
+
+    <TextView
+            android:id="@+id/tv_friday"
+            style="@style/DayCircle"
+            android:textAlignment="center"
+            android:layout_gravity="center"
+            android:text="F"/>
+
+    <TextView
+            android:id="@+id/tv_saturday"
+            android:layout_gravity="center"
+            style="@style/DayCircle"
+            android:text="S"/>
+
+    <TextView
+            android:id="@+id/tv_sunday"
+            android:layout_gravity="center"
+            style="@style/DayCircle"
+            android:text="S"/>
+</LinearLayout>

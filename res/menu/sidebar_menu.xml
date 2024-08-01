@@ -1,0 +1,5 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:id="@+id/group_course" android:checkableBehavior="single">
+        <!-- Course item, modules, and contents will be added dynamically -->
+    </group>
+</menu>

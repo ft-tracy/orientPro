@@ -14,13 +14,13 @@
     <!-- First-time user view -->
     <include
             android:id="@+id/first_time_user_view"
-            layout="@layout/newuser_view"
+            layout="@layout/fragment_new_user"
             android:visibility="gone" />
 
     <!-- Returning user view -->
     <include
             android:id="@+id/returning_user_view"
-            layout="@layout/returninguser_view"
+            layout="@layout/fragment_returning_user"
             android:visibility="gone" />
 
 </FrameLayout>

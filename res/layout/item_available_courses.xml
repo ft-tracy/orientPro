@@ -1,7 +1,9 @@
 <HorizontalScrollView xmlns:android="http://schemas.android.com/apk/res/android"
                       android:layout_width="match_parent"
                       android:layout_height="wrap_content"
-                      android:padding="16dp">
+                      android:focusable="true"
+                      android:padding="16dp"
+                      android:clickable="true">
 
     <LinearLayout
             android:layout_width="wrap_content"
@@ -10,15 +12,19 @@
 
         <!-- Example course item -->
         <androidx.cardview.widget.CardView
+                android:id="@+id/availableCoursesCard"
                 android:layout_width="97dp"
                 android:layout_height="99dp"
                 android:layout_marginEnd="10dp">
 
             <ImageView
+                    android:id="@+id/iv_available_image"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:focusable="true"
                     android:src="@drawable/rounded_image_button"
-                    android:contentDescription="course_image" />
+                    android:contentDescription="course_image"
+                    android:clickable="true"/>
 
         </androidx.cardview.widget.CardView>
     </LinearLayout>
