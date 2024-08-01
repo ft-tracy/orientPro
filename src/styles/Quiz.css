@@ -1,13 +1,11 @@
 .quiz-instructions {
   font-size: 20px;
   margin-top: 20px;
-  background-color: white;
 }
 
 .quiz-list {
   font-size: 20px;
   margin-left: 20px;
-  background-color: white;
 }
 
 .quiz-container {
@@ -87,7 +85,6 @@
 .proceed-details {
   width: 50%;
   padding: 10px;
-  background-color: white;
 }
 
 .quizzes-title {
@@ -106,7 +103,6 @@
   font-size: 22px;
   font-weight: bold;
   text-align: center;
-  background-color: white;
 }
 
 .quiz-score-card {
@@ -119,7 +115,6 @@
 .quiz-score-card-body .card-title {
   font-size: 50px;
   font-weight: bolder;
-  color: white;
   align-items: center;
 }
 
@@ -129,13 +124,11 @@
 
 .quiz-score-card-body .card-text {
   font-size: 23px;
-  color: white;
   margin-bottom: 10px;
 }
 
 .quiz-card {
   background-color: #333;
-  color: white;
   border-radius: 10px;
 }
 

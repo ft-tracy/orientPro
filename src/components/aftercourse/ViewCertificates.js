@@ -90,7 +90,7 @@ const ViewCertificates = () => {
           <h2 className="titleContainer">Your certificates</h2>
           {/*Welcome to the certificates page*/}
           <div className="earned-container">
-            <h3 style={{ backgroundColor: "white" }}>Earned certificates</h3>
+            <h3>Earned certificates</h3>
             <ListGroup>
               {earnedCertificates.length > 0 ? (
                 earnedCertificates.map((course, index) => (
@@ -117,9 +117,7 @@ const ViewCertificates = () => {
           </div>
 
           <div className="not-earned-container">
-            <h3 style={{ backgroundColor: "white" }}>
-              Yet to earn certificates
-            </h3>
+            <h3>Yet to earn certificates</h3>
             <ListGroup>
               {yetToEarnCertificates.length > 0 ? (
                 yetToEarnCertificates.map((course, index) => (

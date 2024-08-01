@@ -212,131 +212,145 @@ const ConversationsCard = ({ videoid, userid }) => {
           {/* End of add a comment section */}
 
           {/* Start of mapping comments and their replies */}
-          {comments.slice(0, showMoreComments).map((comment) => (
-            <div key={comment.commentId} className="comment-card">
-              <Card className="comment-card">
-                <Card.Body>
-                  <div className="user-icon-container">
-                    <div className="user-icon">
-                      <span className="user-letter">{comment.userInitial}</span>
-                    </div>
-                    <div className="review-content">
-                      <Card.Text>
-                        <span>{comment.user}</span>
-                        <span className="time-passed">
-                          {comment.commentDate && (
-                            <ReactTimeAgo
-                              date={new Date(comment.commentDate)}
-                              locale="en-US"
-                            />
-                          )}
+          {comments.slice(0, showMoreComments).map((comment) => {
+            const commentUserName = `${comment.firstName} ${comment.lastName}`;
+            const commentUserInitials = `${comment.firstName[0]}${comment.lastName[0]}`;
+
+            return (
+              <div key={comment.commentId} className="comment-card">
+                <Card className="comment-card">
+                  <Card.Body>
+                    <div className="user-icon-container">
+                      <div className="user-icon">
+                        <span className="user-letter">
+                          {commentUserInitials}
                         </span>
-                      </Card.Text>
+                      </div>
+                      <div className="review-content">
+                        <Card.Text>
+                          <span>{commentUserName}</span>
+                          <span className="time-passed">
+                            {comment.commentDate && (
+                              <ReactTimeAgo
+                                date={new Date(comment.commentDate)}
+                                locale="en-US"
+                              />
+                            )}
+                          </span>
+                        </Card.Text>
+                      </div>
                     </div>
+                    <Card.Text>{comment.commentText}</Card.Text>
+
+                    <div className="actions">
+                      <div
+                        className="likes"
+                        onClick={() => handleCommentLike(comment.commentId)}
+                      >
+                        ⭐ {comment.likeCount}
+                      </div>
+                      <div
+                        className="reply-icon"
+                        onClick={() => toggleReplies(comment.commentId)}
+                      >
+                        💬
+                      </div>
+                    </div>
+
+                    {comment.replies.length > 2 && (
+                      <div className="show-more-replies">
+                        <span onClick={() => toggleReplies(comment.commentId)}>
+                          View all {comment.replies.length} replies
+                        </span>
+                      </div>
+                    )}
+                  </Card.Body>
+                </Card>
+
+                {(showReplies[comment.commentId] ||
+                  comment.replies.length <= 2) && (
+                  <div className="replies-section">
+                    {comment.replies.map((reply) => {
+                      const replyUserName = `${reply.firstName} ${reply.lastName}`;
+                      const replyUserInitials = `${reply.firstName[0]}${reply.lastName[0]}`;
+                      return (
+                        <Card key={reply.replyId} className="reply-card">
+                          <Card.Body>
+                            <div className="user-icon-container">
+                              <div className="user-icon">
+                                <span className="user-letter">
+                                  {replyUserInitials}
+                                </span>
+                              </div>
+                              <div className="review-content">
+                                <Card.Text>
+                                  <span>{replyUserName}</span>
+                                  <span className="time-passed">
+                                    {reply.replyDate && (
+                                      <ReactTimeAgo
+                                        date={new Date(reply.replyDate)}
+                                        locale="en-US"
+                                      />
+                                    )}
+                                  </span>
+                                </Card.Text>
+                              </div>
+                            </div>
+                            <Card.Text>{reply.replyText}</Card.Text>
+                            <div
+                              className="likes"
+                              onClick={() =>
+                                handleReplyLike(
+                                  comment.commentId,
+                                  reply.replyId
+                                )
+                              }
+                            >
+                              ⭐ {reply.likeCount}
+                            </div>
+                          </Card.Body>
+                        </Card>
+                      );
+                    })}
                   </div>
-                  <Card.Text>{comment.commentText}</Card.Text>
+                )}
 
-                  <div className="actions">
-                    <div
-                      className="likes"
-                      onClick={() => handleCommentLike(comment.commentId)}
-                    >
-                      ⭐ {comment.likeCount}
-                    </div>
-                    <div
-                      className="reply-icon"
-                      onClick={() => toggleReplies(comment.commentId)}
-                    >
-                      💬
-                    </div>
-                  </div>
-
-                  {comment.replies.length > 2 && (
-                    <div className="show-more-replies">
-                      <span onClick={() => toggleReplies(comment.commentId)}>
-                        View all {comment.replies.length} replies
-                      </span>
-                    </div>
-                  )}
-                </Card.Body>
-              </Card>
-
-              {(showReplies[comment.commentId] ||
-                comment.replies.length <= 2) && (
-                <div className="replies-section">
-                  {comment.replies.map((reply) => (
-                    <Card key={reply.replyId} className="reply-card">
-                      <Card.Body>
-                        <div className="user-icon-container">
-                          <div className="user-icon">
-                            <span className="user-letter">
-                              {reply.userInitial}
-                            </span>
-                          </div>
-                          <div className="review-content">
-                            <Card.Text>
-                              <span>{reply.user}</span>
-                              <span className="time-passed">
-                                {reply.replyDate && (
-                                  <ReactTimeAgo
-                                    date={new Date(reply.replyDate)}
-                                    locale="en-US"
-                                  />
-                                )}
-                              </span>
-                            </Card.Text>
-                          </div>
-                        </div>
-                        <Card.Text>{reply.replyText}</Card.Text>
-                        <div
-                          className="likes"
-                          onClick={() =>
-                            handleReplyLike(comment.commentId, reply.replyId)
-                          }
-                        >
-                          ⭐ {reply.likeCount}
-                        </div>
-                      </Card.Body>
-                    </Card>
-                  ))}
-                </div>
-              )}
-
-              {showReplies[comment.commentId] && (
-                <Form.Group
-                  controlId={`newReply-${comment.commentId}`}
-                  className="reply-input-group"
-                >
-                  <Form.Control
-                    type="text"
-                    placeholder="Write a reply..."
-                    name={`newReply-${comment.commentId}`}
-                    value={newReply[comment.commentId] || ""}
-                    onFocus={() => setShowReplyButton(true)}
-                    onChange={(e) =>
-                      setNewReply({
-                        ...newReply,
-                        [comment.commentId]: e.target.value,
-                      })
-                    }
-                    onKeyDown={onKeyDownHandler}
-                    className="reply-input"
-                    ref={inputRef}
-                  />
-                  {showReplyButton && (
-                    <Button
-                      type="submit"
-                      onClick={() => handleAddReply(comment.commentId)}
-                      className="add-reply-button"
-                      ref={buttonRef}
-                    >
-                      Reply
-                    </Button>
-                  )}
-                </Form.Group>
-              )}
-            </div>
-          ))}
+                {showReplies[comment.commentId] && (
+                  <Form.Group
+                    controlId={`newReply-${comment.commentId}`}
+                    className="reply-input-group"
+                  >
+                    <Form.Control
+                      type="text"
+                      placeholder="Write a reply..."
+                      name={`newReply-${comment.commentId}`}
+                      value={newReply[comment.commentId] || ""}
+                      onFocus={() => setShowReplyButton(true)}
+                      onChange={(e) =>
+                        setNewReply({
+                          ...newReply,
+                          [comment.commentId]: e.target.value,
+                        })
+                      }
+                      onKeyDown={onKeyDownHandler}
+                      className="reply-input"
+                      ref={inputRef}
+                    />
+                    {showReplyButton && (
+                      <Button
+                        type="submit"
+                        onClick={() => handleAddReply(comment.commentId)}
+                        className="add-reply-button"
+                        ref={buttonRef}
+                      >
+                        Reply
+                      </Button>
+                    )}
+                  </Form.Group>
+                )}
+              </div>
+            );
+          })}
 
           {/* Show more or less comments */}
           {comments.length > 5 && (

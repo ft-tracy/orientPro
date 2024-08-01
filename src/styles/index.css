@@ -4,9 +4,7 @@ body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
-  background-image: url("/src/assets/course-imges/2604_R0lVIE5JQyA1NjgtNjA.jpg");
-  background-size: cover;
-  background-position: center;
+  background-color: rgba(235, 233, 233, 0.993);
 }
 
 * {

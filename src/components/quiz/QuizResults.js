@@ -124,7 +124,7 @@ const QuizResults = () => {
               <p>{formattedDate}</p>
             </div>
 
-            <div className="center" style={{ backgroundColor: "white" }}>
+            <div className="center">
               <Link
                 to={`/course/${courseid}/module/${moduleid}/quiz/${quizid}`}
               >
