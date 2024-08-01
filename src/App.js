@@ -57,7 +57,6 @@ const CompletedCoursesPage = lazy(() =>
 
 //Header pages
 const Settings = lazy(() => import("./components/settings/Settings"));
-const SearchResults = lazy(() => import("./components/SearchResults"));
 
 function App() {
   return (
@@ -116,7 +115,6 @@ function App() {
                 path="/completedcourses"
                 element={<CompletedCoursesPage />}
               />
-              <Route path="/searchresults" element={<SearchResults />} />
             </Routes>
           </Suspense>
         </ErrorBoundary>
