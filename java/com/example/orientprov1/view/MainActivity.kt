@@ -1,5 +1,6 @@
 package com.example.orientprov1.view
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -31,13 +32,6 @@ class MainActivity : AppCompatActivity() {
 
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
 
-        // Retrieve token from intent
-        val token = intent.getStringExtra("TOKEN_KEY")
-        token?.let {
-            viewModel.setToken(it)
-            viewModel.fetchUserDetails()
-        }
-
         // Set up the NavController
         try {
             val navHostFragment = supportFragmentManager
@@ -55,11 +49,37 @@ class MainActivity : AppCompatActivity() {
         // Set up the settings drawer
         setupSettingsDrawer()
 
+// Retrieve token from intent or SharedPreferences
+        val token = intent.getStringExtra("TOKEN_KEY") ?: getTokenFromPreferences()
+        Log.d("MainActivity", "Token is $token")
+        token?.let {
+            viewModel.setToken(it)
+            Log.d("MainActivity", "setting token")
+            viewModel.fetchUserDetails()
+            Log.d("MainActivity", "fetching user details")
+            setTokenForHomeFragment(it) // Set token for HomeFragment without navigating
+        }
+
+
         // Observe user details and update UI accordingly
         viewModel.userDetails.observe(this, Observer { userResponse ->
             // Update UI based on user details
         })
 
+    }
+
+    private fun setTokenForHomeFragment(token: String) {
+        val bundle = Bundle().apply {
+            putString("TOKEN_KEY", token)
+        }
+        Log.d("MainActivity", "Home Fragment Bundle contains: $bundle")
+        navController.currentBackStackEntry?.savedStateHandle?.set("TOKEN_KEY", token)
+        Log.d("MainActivity", "Token set for Home Fragment")
+    }
+
+    private fun getTokenFromPreferences(): String? {
+        val sharedPreferences = getSharedPreferences("prefs", Context.MODE_PRIVATE)
+        return sharedPreferences.getString("TOKEN_KEY", null)
     }
 
     private fun setupSettingsDrawer() {
@@ -101,21 +121,24 @@ class MainActivity : AppCompatActivity() {
             Log.d("MainActivity", "BottomNavigation setup with NavController")
 
             binding.bottomNavigation.setOnItemSelectedListener { item ->
+                val bundle = Bundle().apply {
+                    putString("TOKEN_KEY", viewModel.token)
+                }
                 when (item.itemId) {
                     R.id.navigation_home -> {
-                        navController.navigate(R.id.navigation_home)
+                        navController.navigate(R.id.navigation_home, bundle)
                         Log.d("MainActivity", "Navigated to home")
                     }
                     R.id.navigation_quiz -> {
-                        navController.navigate(R.id.navigation_quiz)
+                        navController.navigate(R.id.navigation_quiz, bundle)
                         Log.d("MainActivity", "Navigated to quiz")
                     }
                     R.id.navigation_course -> {
-                        navController.navigate(R.id.navigation_course)
+                        navController.navigate(R.id.navigation_course, bundle)
                         Log.d("MainActivity", "Navigated to course")
                     }
                     R.id.navigation_certificate -> {
-                        navController.navigate(R.id.navigation_certificate)
+                        navController.navigate(R.id.navigation_certificate, bundle)
                         Log.d("MainActivity", "Navigated to certificate")
                     }
                     R.id.navigation_settings -> {

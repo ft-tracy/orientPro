@@ -1,10 +1,12 @@
 package com.example.orientprov1.model.repository
 
 import android.content.SharedPreferences
+import android.util.Log
 import com.example.orientprov1.model.LoginRequest
 import com.example.orientprov1.model.LoginResponse
 import com.example.orientprov1.model.ResetPasswordRequest
 import com.example.orientprov1.model.ResetPasswordResponse
+import com.example.orientprov1.model.UserAccessData
 import com.example.orientprov1.model.api.ApiService
 import retrofit2.Response
 
@@ -65,6 +67,23 @@ class UserRepository(private val apiService: ApiService, private val sharedPrefe
             remove("TOKEN")
             remove("IS_FIRST_LOGIN")
             apply()
+        }
+    }
+
+    suspend fun getUserAccessData(userId: String): UserAccessData {
+        try {
+            Log.d("UserRepository", "Getting weekly progress for: $userId")
+            val response = apiService.getWeeklyProgress(userId)
+            if (response.isSuccessful) {
+                val accessData = response.body() ?: throw Exception("No user access data received")
+                Log.d("UserRepository", "Weekly progress: $accessData")
+                return accessData
+            } else {
+                throw Exception("Error fetching user access data: ${response.code()}")
+            }
+        } catch (e: Exception) {
+            Log.e("UserRepository", "Error fetching user access data", e)
+            throw e
         }
     }
 

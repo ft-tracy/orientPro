@@ -55,6 +55,7 @@ class LoginActivity : AppCompatActivity() {
         loginViewModel.loginResult.observe(this, Observer { result ->
             result.onSuccess {
                 Log.d("LoginActivity", "Login successful, isFirstLogin: ${it.isFirstLogin}")
+                it.token?.let { it1 -> saveToken(it1) }
                 if (it.isFirstLogin == true) {
                     startActivity(Intent(this, UpdateUserInfoActivity::class.java))
                 } else {
@@ -78,5 +79,12 @@ class LoginActivity : AppCompatActivity() {
             }
             finish()
         }
+    }
+
+    private fun saveToken(token: String) {
+        val sharedPreferences = getSharedPreferences("prefs", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putString("TOKEN_KEY", token)
+        editor.apply()
     }
 }

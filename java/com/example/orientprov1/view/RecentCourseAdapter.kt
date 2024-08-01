@@ -30,7 +30,7 @@ class RecentCoursesAdapter(
 
     override fun onBindViewHolder(holder: RecentCourseViewHolder, position: Int) {
         val course = courses[position]
-        holder.tvCourseName.text = course.name
+        holder.tvCourseName.text = course.courseTitle
         holder.ivCourseImage.setImageResource(course.imageResId) // Update with actual image loading logic
         holder.pbCourseProgress.progress = course.progress
         holder.btnContinue.setOnClickListener { onContinueClick(course) }

@@ -2,17 +2,15 @@ package com.example.orientprov1.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.orientprov1.model.Comment
+import com.example.orientprov1.model.Content
+import com.example.orientprov1.model.ContentType
 import com.example.orientprov1.model.VideoDetails
 import com.example.orientprov1.model.repository.CourseRepository
 import kotlinx.coroutines.launch
 
-class CourseVideoViewModel(private val repository: CourseRepository) : ViewModel() {
-
-    private val _videoDetails = MutableLiveData<VideoDetails>()
-    val videoDetails: LiveData<VideoDetails> get() = _videoDetails
+class CourseVideoViewModel(private val repository: CourseRepository) : BaseCourseContentViewModel(repository) {
 
     private val _comments = MutableLiveData<List<Comment>>()
     val comments: LiveData<List<Comment>> get() = _comments
@@ -20,38 +18,30 @@ class CourseVideoViewModel(private val repository: CourseRepository) : ViewModel
     private val _newCommentText = MutableLiveData<String>()
     val newCommentText: LiveData<String> get() = _newCommentText
 
-    fun loadVideoDetails(videoId: String) {
-        // Load video details from backend
-        viewModelScope.launch {
-            _videoDetails.value = repository.loadVideoDetails()
+    fun loadContentSpecificData(content: Content?, userId: String?) {
+        if (content?.type == ContentType.VIDEO) {
+            loadComments(content.id)
         }
     }
 
-    fun loadComments(videoId: String) {
+    private fun loadComments(videoId: String) {
         viewModelScope.launch {
-            _comments.value = repository.getCommentsForVideo(videoId)
+            val comments = repository.getCommentsForVideo(videoId)
+            _comments.value = comments
         }
     }
 
     fun addComment(userId: String, videoId: String, commentText: String) {
         viewModelScope.launch {
-            val result = repository.addComment(userId, videoId, commentText)
-            result.onSuccess {
-                // Handle success (e.g., update UI, fetch new comments, etc.)
-            }.onFailure {
-                // Handle failure (e.g., show error message)
-            }
+            repository.addComment(userId, videoId, commentText)
+            loadComments(videoId)
         }
     }
 
-    fun likeComment(videoId: String, commentId: String, likes: Int) {
+    fun likeComment(videoId: String, commentId: String, newLikes: Int) {
         viewModelScope.launch {
-            val result = repository.likeComment(videoId, commentId, likes)
-            result.onSuccess {
-                // Handle success (e.g., update UI)
-            }.onFailure {
-                // Handle failure (e.g., show error message)
-            }
+            repository.likeComment(videoId, commentId, newLikes)
+            loadComments(videoId)
         }
     }
 

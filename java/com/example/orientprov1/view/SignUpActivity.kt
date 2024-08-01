@@ -1,5 +1,6 @@
 package com.example.orientprov1.view
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -47,12 +48,13 @@ class SignUpActivity : AppCompatActivity() {
 
         signUpViewModel.signUpResult.observe(this) { result ->
             result.onSuccess { response ->
+                response.token?.let { token ->
+                    saveToken(token)
+                    navigateToMainActivity(token)
+                }
                 if (response.message == "Sign-up successful.") {
                     Log.d("SignUpActivity", "Sign-up successful: ${response.message}")
                     showToast("Sign-up successful")
-                    val intent = Intent(this@SignUpActivity, MainActivity::class.java)
-                    startActivity(intent)
-                    finish()
                 } else {
                     val errorMessage = response.message
                     Log.e("SignUpActivity", "Sign-up failed: $errorMessage")
@@ -63,8 +65,6 @@ class SignUpActivity : AppCompatActivity() {
                 showToast("Sign-up failed: ${t.message}")
             }
         }
-
-
     }
 
     private fun handleSignUp() {
@@ -107,5 +107,19 @@ class SignUpActivity : AppCompatActivity() {
 
     private fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun saveToken(token: String) {
+        val sharedPreferences = getSharedPreferences("prefs", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putString("TOKEN_KEY", token)
+        editor.apply()
+    }
+
+    private fun navigateToMainActivity(token: String) {
+        val intent = Intent(this, MainActivity::class.java)
+        intent.putExtra("TOKEN_KEY", token)
+        startActivity(intent)
+        finish()
     }
 }

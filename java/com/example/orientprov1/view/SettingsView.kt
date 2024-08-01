@@ -78,7 +78,7 @@ class SettingsView : Fragment() {
         viewModel.navigateToProfile.observe(viewLifecycleOwner) { shouldNavigate ->
             Log.d("SettingsView", "navigateToProfile observed: $shouldNavigate")
             if (shouldNavigate) {
-                val token = (activity as? MainActivity)?.viewModel?.getToken()
+                val token = (activity as? MainActivity)?.viewModel?.token
                 if (token != null) {
                     Log.d("SettingsView", "Token retrieved: $token")
                     try {

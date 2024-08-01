@@ -1,60 +1,75 @@
 package com.example.orientprov1.view
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.orientprov1.R
+import com.example.orientprov1.model.Progress
+import com.example.orientprov1.model.QuizDetails
+import com.example.orientprov1.model.api.ApiClient
+import com.example.orientprov1.model.api.ApiService
+import com.example.orientprov1.repository.QuizRepository
+import com.example.orientprov1.viewmodel.MainViewModel
+import com.example.orientprov1.viewmodel.QuizViewModel
+import com.example.orientprov1.viewmodel.QuizViewModelFactory
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [QuizFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class QuizFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private lateinit var viewModel: QuizViewModel
+    private lateinit var quizRecyclerView: RecyclerView
+    private lateinit var adapter: QuizAdapter
+    private lateinit var mainViewModel: MainViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
+        Log.d("QuizFragment", "onCreateView called")
         return inflater.inflate(R.layout.fragment_quiz, container, false)
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment QuizFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            QuizFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        Log.d("QuizFragment", "onViewCreated called")
+
+        val token = arguments?.getString("TOKEN_KEY") ?: return
+
+        quizRecyclerView = view.findViewById(R.id.QuizRecyclerView)
+        quizRecyclerView.layoutManager = LinearLayoutManager(context)
+
+        val apiService = ApiClient.createService(ApiService::class.java)
+        val repository = QuizRepository(apiService)
+        val factory = QuizViewModelFactory(repository, apiService)
+        viewModel = ViewModelProvider(this, factory).get(QuizViewModel::class.java)
+
+        viewModel.quizDetailsWithProgress.observe(viewLifecycleOwner, Observer { quizzes ->
+            adapter = QuizAdapter(quizzes)
+            quizRecyclerView.adapter = adapter
+        })
+
+        mainViewModel = ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
+
+//        mainViewModel.userDetails.observe(viewLifecycleOwner) {
+//        }
+
+        loadData()
+    }
+
+    private fun loadData() {
+        // Assuming you have a way to get the user token
+        Log.d("QuizFragment", "loadData called")
+        val userToken = mainViewModel.token
+        userToken?.let {
+            viewModel.fetchAllQuizzesWithProgress(it)
+        }
     }
 }

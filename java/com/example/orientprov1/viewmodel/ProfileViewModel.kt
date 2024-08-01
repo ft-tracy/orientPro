@@ -26,7 +26,7 @@ class ProfileViewModel : ViewModel() {
                         firstName.value = user.firstName
                         lastName.value = user.lastName
                         email.value = user.email
-                        companyRole.value = user.companyRole
+                        companyRole.value = user.role
                         userName.value = "${user.firstName} ${user.lastName}"
                     }
                 } else {

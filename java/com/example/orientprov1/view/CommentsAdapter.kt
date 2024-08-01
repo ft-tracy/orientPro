@@ -13,7 +13,9 @@ import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-class CommentAdapter : RecyclerView.Adapter<CommentAdapter.CommentViewHolder>() {
+class CommentsAdapter(
+    private val onLikeClick: (String, Int) -> Unit
+) : RecyclerView.Adapter<CommentsAdapter.CommentViewHolder>() {
 
     private val comments = mutableListOf<Comment>()
 
@@ -76,3 +78,4 @@ class CommentAdapter : RecyclerView.Adapter<CommentAdapter.CommentViewHolder>() 
         }
     }
 }
+

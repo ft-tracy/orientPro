@@ -1,6 +1,7 @@
 package com.example.orientprov1.view
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
@@ -57,6 +58,7 @@ class UpdateUserInfoActivity : AppCompatActivity() {
                 is Result.Loading -> showLoading(true)
                 is Result.Success -> {
                     showLoading(false)
+                    startActivity(Intent(this, MainActivity::class.java))
                     Toast.makeText(this, result.data, Toast.LENGTH_LONG).show()
                     finish()
                 }
