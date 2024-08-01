@@ -1,0 +1,148 @@
+.navbar {
+  background-color: #001628;
+  color: white;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+  height: 80px;
+  margin-bottom: 20px;
+  position: relative;
+  z-index: 1030;
+  /*background-color: var(--foreground-color);
+  color: var(--secondary-text-color);s */
+}
+
+.navbar-collapse {
+  background-color: #001628;
+  color: white;
+}
+
+.navbar-toggler {
+  border-color: white;
+}
+
+.navbar-toggler-icon {
+  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba%28255, 255, 255, 1%29' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+}
+
+.navbar-divider {
+  color: white;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+}
+
+.nav-link {
+  color: white;
+}
+
+.nav-link:hover {
+  color: rgb(242, 237, 237);
+}
+
+.nav-item {
+  color: white;
+  align-items: center;
+}
+
+.user-icon {
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  position: relative;
+  margin-left: 10px;
+}
+
+.user-letter {
+  color: #000;
+  font-size: 20px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.dropdown-toggle::after {
+  display: none !important; /* Hide dropdown arrow */
+}
+
+/* #courses-dropdown::after {
+  display: inline-block !important;  Show dropdown arrow 
+  margin-left: 0.255em;
+  vertical-align: 0.255em;
+  content: "";
+  border-top: 0.3em solid;
+  border-right: 0.3em solid transparent;
+  border-bottom: 0;
+  border-left: 0.3em solid transparent;
+} */
+
+#courses-dropdown {
+  background-color: transparent !important;
+  border: none !important;
+  color: white !important;
+  display: flex;
+  align-items: center;
+}
+
+.navbar-collapse .form-inline {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.navbar-collapse .user-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 10px;
+}
+
+@media (max-width: 900px) {
+  .navbar-collapse {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .navbar-collapse .navbar-nav,
+  .navbar-collapse #courses-dropdown {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .navbar-collapse .navbar-nav .nav-link {
+    text-align: center;
+    width: 100%;
+  }
+
+  .navbar-collapse .navbar-divider {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .navbar-collapse .form-inline {
+    margin: 10px 0;
+  }
+
+  .navbar-collapse .dropdown {
+    width: 100%;
+    text-align: center;
+  }
+
+  .navbar-collapse .user-icon {
+    margin: 10px 0;
+  }
+}

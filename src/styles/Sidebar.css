@@ -1,0 +1,58 @@
+.sidebar {
+  background-color: #a7a6a6;
+  height: calc(100vh - 310px);
+  width: 240px;
+  position: absolute;
+  padding-left: 5px;
+  top: 105px;
+  bottom: 0;
+  left: 0;
+  transition: transform 0.3s ease;
+  transform: translateX(-100%);
+  overflow-y: auto; /* Make it scrollable*/
+  z-index: 1000; /* Ensure it stays on top of other elements*/
+}
+
+.sidebar.show {
+  transform: translateX(0);
+}
+
+.sidebar .nav-link {
+  color: #333;
+  display: block;
+  width: 100%;
+  padding: 10px 15px;
+}
+
+.sidebar .nav-link:hover {
+  background-color: #e9ecef;
+  padding-left: 20px;
+}
+
+.sidebar-toggle-icon {
+  font-size: 24px; /* Increase the font size for the icon */
+  cursor: pointer; /* Add cursor pointer to indicate it's clickable */
+  position: absolute;
+  top: 81px;
+  left: 20px;
+  z-index: 1100; /* Make sure it stays on top of the sidebar*/
+}
+
+.indent {
+  padding-left: 20px;
+}
+
+.sidebar-course {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.sidebar-module {
+  font-weight: bold;
+  margin-top: 5px;
+}
+
+.disabled-link {
+  pointer-events: none;
+  opacity: 0.5;
+}

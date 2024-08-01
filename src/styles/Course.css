@@ -1,0 +1,107 @@
+.main-content {
+  transition: margin-left 0.3s ease;
+}
+
+.main-content.content-shift {
+  margin-left: 250px; /* Sidebar width*/
+}
+
+.course-container {
+  width: 60%;
+  justify-content: center;
+  word-wrap: break-word;
+}
+
+.reviews-container {
+  width: 40%;
+  padding: 10px;
+  word-wrap: break-word;
+}
+
+.course-card {
+  margin-bottom: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.course-image {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+.course-card-body {
+  padding: 20px;
+}
+
+.course-card-body .card-title {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+
+.course-card-body .card-text {
+  margin-bottom: 10px;
+}
+
+.review-card,
+.course-card {
+  margin-top: 20px;
+  width: auto;
+  padding: 10px;
+  height: auto;
+}
+
+.review-card-body {
+  display: flex;
+  align-items: center;
+}
+
+.review-content {
+  margin-left: 10px;
+}
+
+.star-rating {
+  display: flex;
+  margin-left: 15px;
+}
+
+.review-text {
+  margin-left: 10px;
+}
+
+.user-icon-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.average-ratings {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.average-star {
+  color: gold;
+  font-size: 50px;
+}
+
+.average-number {
+  font-size: 40px;
+  margin-left: 10px;
+}
+
+.star-distribution {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.ratings-bar {
+  width: 80%;
+  margin-right: 10px;
+}
+
+.other-course-card-container {
+  width: 100%;
+}
