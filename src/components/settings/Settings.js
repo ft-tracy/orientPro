@@ -1,12 +1,10 @@
-import React, { useState, useEffect, useContext } from "react";
-import { Modal, Button, Form, Spinner, Alert } from "react-bootstrap";
+import React, { useState, useEffect } from "react";
+import { Modal, Button, Spinner, Alert } from "react-bootstrap";
 import UserServices from "../../services/UserServices";
 import { useNavigate } from "react-router-dom";
-import { ThemeContext } from "../../contexts/ThemeContext";
 
 const Settings = () => {
   const navigate = useNavigate();
-  const { darkMode, toggleDarkMode } = useContext(ThemeContext);
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
